@@ -1,0 +1,122 @@
+{% extends "group_bio/base.html" %}
+
+{% block title %}Anggota Kelompok - Bismillah Group A{% endblock %}
+
+{% block content %}
+<div class="row mb-5">
+    <div class="col-12">
+        <div class="card shadow-sm">
+            <div class="card-header">
+                <h3 class="mb-0">👥 Daftar Anggota Kelompok</h3>
+            </div>
+            <div class="card-body">
+                <p class="text-muted mb-4">
+                    Total: <strong>{{ member_count }} anggota</strong>
+                </p>
+
+                <div class="row">
+                    {% for member in members %}
+                        <div class="col-lg-4 col-md-6 mb-4">
+                            <div class="card member-card h-100">
+                                <div class="card-body text-center">
+                                    <!-- Profile Image -->
+                                    {% if member.profile_image %}
+                                        <img src="{{ member.profile_image }}" alt="{{ member.full_name }}" 
+                                             class="rounded-circle mb-3" width="80" height="80"
+                                             style="object-fit: cover; border: 3px solid var(--primary-color);">
+                                    {% else %}
+                                        <div class="rounded-circle bg-primary d-inline-flex align-items-center justify-content-center mb-3"
+                                             style="width: 80px; height: 80px; color: white; font-size: 2rem;">
+                                            👤
+                                        </div>
+                                    {% endif %}
+
+                                    <!-- Name -->
+                                    <h5 class="card-title mb-2">{{ member.full_name }}</h5>
+
+                                    <!-- Role Badge -->
+                                    <div class="mb-2">
+                                        <span class="member-role">
+                                            {% if member.role == 'ketua' %}
+                                                👑 {{ member.get_role_display }}
+                                            {% else %}
+                                                👤 {{ member.get_role_display }}
+                                            {% endif %}
+                                        </span>
+                                    </div>
+
+                                    <!-- Details -->
+                                    <div class="text-start mt-3">
+                                        <p class="mb-2">
+                                            <strong>NIM:</strong> {{ member.nim }}
+                                        </p>
+                                        <p class="mb-2">
+                                            <strong>Email:</strong> <a href="mailto:{{ member.email }}">{{ member.email }}</a>
+                                        </p>
+                                        {% if member.phone %}
+                                            <p class="mb-2">
+                                                <strong>Telepon:</strong> {{ member.phone }}
+                                            </p>
+                                        {% endif %}
+                                        {% if member.bio %}
+                                            <p class="mb-2">
+                                                <strong>Bio:</strong><br>
+                                                <small>{{ member.bio }}</small>
+                                            </p>
+                                        {% endif %}
+                                    </div>
+
+                                    <!-- Joined Date -->
+                                    <div class="text-muted text-center mt-3 pt-3" style="border-top: 1px solid #e9ecef;">
+                                        <small>Bergabung: {{ member.joined_at|date:"d/m/Y" }}</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% empty %}
+                        <div class="col-12">
+                            <div class="alert alert-info text-center">
+                                Belum ada anggota kelompok yang terdaftar.
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Security Information -->
+<div class="row">
+    <div class="col-12">
+        <div class="card shadow-sm bg-light">
+            <div class="card-header bg-info">
+                <h5 class="mb-0" style="color: white;">ℹ️ Informasi Keamanan</h5>
+            </div>
+            <div class="card-body">
+                <p>
+                    Data anggota kelompok di halaman ini bersifat <strong>publik</strong> dan dapat dilihat oleh siapa saja tanpa perlu login.
+                </p>
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6 class="text-info">Authentication:</h6>
+                        <ul class="small">
+                            <li>✅ Data dimuat dari database yang aman</li>
+                            <li>✅ Informasi telah divalidasi saat pendaftaran</li>
+                            <li>✅ Profile image diambil dari Google</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="text-info">Authorization:</h6>
+                        <ul class="small">
+                            <li>✅ Halaman bersifat publik (tidak memerlukan login)</li>
+                            <li>✅ Hanya informasi non-sensitif yang ditampilkan</li>
+                            <li>✅ Hanya anggota yang terdaftar yang ditampilkan</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

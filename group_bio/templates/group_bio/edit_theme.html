@@ -1,0 +1,227 @@
+{% extends "group_bio/base.html" %}
+
+{% block title %}Edit Tema - Bismillah Group A{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card shadow-sm">
+            <div class="card-header">
+                <h3 class="mb-0">✏️ Ubah Tema Website</h3>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-info">
+                    <strong>🔐 Fitur Terbatas:</strong> Hanya anggota kelompok yang terdaftar dapat mengubah tema ini.
+                    Semua perubahan akan dicatat dalam audit trail.
+                </div>
+
+                <form method="POST" id="themeForm">
+                    {% csrf_token %}
+                    
+                    <!-- Warna -->
+                    <div class="mb-4">
+                        <h5 class="text-primary mb-3">🎨 Kustomisasi Warna</h5>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label class="form-label">Warna Utama</label>
+                                <div class="input-group">
+                                    <input type="color" name="primary_color" class="form-control form-control-color" 
+                                           value="{{ theme.primary_color }}" id="primaryColor">
+                                    <input type="text" name="primary_color" class="form-control" 
+                                           value="{{ theme.primary_color }}" id="primaryColorText" readonly>
+                                </div>
+                                <small class="text-muted">Warna untuk header dan tombol utama</small>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label">Warna Sekunder</label>
+                                <div class="input-group">
+                                    <input type="color" name="secondary_color" class="form-control form-control-color" 
+                                           value="{{ theme.secondary_color }}" id="secondaryColor">
+                                    <input type="text" name="secondary_color" class="form-control" 
+                                           value="{{ theme.secondary_color }}" id="secondaryColorText" readonly>
+                                </div>
+                                <small class="text-muted">Warna untuk elemen sekunder</small>
+                            </div>
+                        </div>
+
+                        <div class="row mt-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Warna Aksen</label>
+                                <div class="input-group">
+                                    <input type="color" name="accent_color" class="form-control form-control-color" 
+                                           value="{{ theme.accent_color }}" id="accentColor">
+                                    <input type="text" name="accent_color" class="form-control" 
+                                           value="{{ theme.accent_color }}" id="accentColorText" readonly>
+                                </div>
+                                <small class="text-muted">Warna untuk highlight dan aksen</small>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label">Warna Latar Belakang</label>
+                                <div class="input-group">
+                                    <input type="color" name="background_color" class="form-control form-control-color" 
+                                           value="{{ theme.background_color }}" id="backgroundColor">
+                                    <input type="text" name="background_color" class="form-control" 
+                                           value="{{ theme.background_color }}" id="backgroundColorText" readonly>
+                                </div>
+                                <small class="text-muted">Warna latar belakang halaman</small>
+                            </div>
+                        </div>
+
+                        <div class="row mt-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Warna Teks</label>
+                                <div class="input-group">
+                                    <input type="color" name="text_color" class="form-control form-control-color" 
+                                           value="{{ theme.text_color }}" id="textColor">
+                                    <input type="text" name="text_color" class="form-control" 
+                                           value="{{ theme.text_color }}" id="textColorText" readonly>
+                                </div>
+                                <small class="text-muted">Warna teks utama</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <!-- Font -->
+                    <div class="mb-4">
+                        <h5 class="text-primary mb-3">📝 Pengaturan Font</h5>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label for="fontFamily" class="form-label">Jenis Font</label>
+                                <select name="font_family" id="fontFamily" class="form-select">
+                                    {% for font in font_choices %}
+                                        <option value="{{ font }}" {% if font == theme.font_family %}selected{% endif %}>
+                                            {{ font }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                                <small class="text-muted">Pilih jenis font untuk seluruh website</small>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="fontSize" class="form-label">Ukuran Font Dasar</label>
+                                <div class="input-group">
+                                    <input type="number" name="font_size_base" id="fontSize" 
+                                           class="form-control" value="{{ theme.font_size_base }}" 
+                                           min="8" max="32" step="1">
+                                    <span class="input-group-text">px</span>
+                                </div>
+                                <small class="text-muted">Ukuran (8-32 pixel)</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Preview -->
+                    <div class="mb-4">
+                        <h5 class="text-primary mb-3">👁️ Preview</h5>
+                        <div class="card" id="preview">
+                            <div class="card-header" style="background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));">
+                                <h5 style="color: white; margin: 0;">Preview Tema</h5>
+                            </div>
+                            <div class="card-body" style="background-color: var(--bg-color); color: var(--text-color);">
+                                <p>Ini adalah preview dari tema yang Anda pilih.</p>
+                                <p style="font-size: calc(var(--font-size-base) * 1.5); font-weight: bold;">
+                                    Ini adalah heading dengan font size {{ theme.font_size_base }}px
+                                </p>
+                                <button class="btn" style="background-color: var(--accent-color); color: white; border: none;">
+                                    Tombol Contoh
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Security Info -->
+                    <div class="alert alert-warning">
+                        <h6>🔐 Keamanan & Audit</h6>
+                        <ul class="mb-0 small">
+                            <li>✅ Semua perubahan dilindungi dengan CSRF token</li>
+                            <li>✅ Perubahan dicatat dalam audit trail</li>
+                            <li>✅ Hanya GroupMember yang dapat melakukan perubahan</li>
+                            <li>✅ Setiap perubahan mencatat username dan timestamp</li>
+                        </ul>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="{% url 'group_bio:index' %}" class="btn btn-secondary">
+                            ← Batal
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            💾 Simpan Perubahan
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Theme History Link -->
+        <div class="mt-4">
+            <a href="{% url 'group_bio:theme_history' %}" class="btn btn-outline-info">
+                📋 Lihat Riwayat Perubahan
+            </a>
+        </div>
+    </div>
+</div>
+
+<script>
+// Update preview colors when inputs change
+document.addEventListener('DOMContentLoaded', function() {
+    const colorInputs = document.querySelectorAll('input[type="color"]');
+    const fontSelect = document.getElementById('fontFamily');
+    const fontSizeInput = document.getElementById('fontSize');
+    const preview = document.getElementById('preview');
+
+    // Sync color inputs and text inputs
+    colorInputs.forEach(input => {
+        input.addEventListener('change', function() {
+            const name = this.name;
+            const value = this.value;
+            const textInput = document.getElementById(name + 'Text');
+            if (textInput) {
+                textInput.value = value;
+            }
+            updatePreview();
+        });
+    });
+
+    fontSelect.addEventListener('change', updatePreview);
+    fontSizeInput.addEventListener('change', updatePreview);
+
+    function updatePreview() {
+        const primaryColor = document.getElementById('primaryColor').value;
+        const secondaryColor = document.getElementById('secondaryColor').value;
+        const accentColor = document.getElementById('accentColor').value;
+        const backgroundColor = document.getElementById('backgroundColor').value;
+        const textColor = document.getElementById('textColor').value;
+        const fontFamily = fontSelect.value;
+        const fontSize = fontSizeInput.value;
+
+        preview.style.setProperty('--primary-color', primaryColor);
+        preview.style.setProperty('--secondary-color', secondaryColor);
+        preview.style.setProperty('--accent-color', accentColor);
+        preview.style.setProperty('--bg-color', backgroundColor);
+        preview.style.setProperty('--text-color', textColor);
+        preview.style.setProperty('--font-family', fontFamily);
+        preview.style.setProperty('--font-size-base', fontSize + 'px');
+    }
+
+    // Initial preview
+    updatePreview();
+});
+
+// Form validation
+document.getElementById('themeForm').addEventListener('submit', function(e) {
+    const fontSize = parseInt(document.getElementById('fontSize').value);
+    if (fontSize < 8 || fontSize > 32) {
+        e.preventDefault();
+        alert('Ukuran font harus antara 8 dan 32 pixel');
+        return false;
+    }
+});
+</script>
+{% endblock %}

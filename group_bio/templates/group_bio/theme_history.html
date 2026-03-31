@@ -1,0 +1,176 @@
+{% extends "group_bio/base.html" %}
+
+{% block title %}Riwayat Perubahan Tema - Bismillah Group A{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-10 mx-auto">
+        <div class="card shadow-sm">
+            <div class="card-header bg-info">
+                <h3 class="mb-0" style="color: white;">📋 Riwayat Perubahan Tema</h3>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-success">
+                    <strong>🔐 Audit Trail:</strong> Berikut adalah daftar lengkap perubahan tema yang telah dilakukan.
+                    Hanya anggota kelompok yang dapat melihat informasi ini.
+                </div>
+
+                {% if modification_history %}
+                    <div class="timeline">
+                        {% for history in modification_history reversed %}
+                            <div class="card mb-3">
+                                <div class="card-header bg-light">
+                                    <div class="row align-items-center">
+                                        <div class="col-md-8">
+                                            <h6 class="mb-0">
+                                                👤 <strong>{{ history.modified_by }}</strong>
+                                            </h6>
+                                        </div>
+                                        <div class="col-md-4 text-end">
+                                            <small class="text-muted">
+                                                🕐 {{ history.modified_at }}
+                                            </small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    {% if history.changes %}
+                                        <h6>Perubahan:</h6>
+                                        <div class="table-responsive">
+                                            <table class="table table-sm table-striped">
+                                                <tbody>
+                                                    {% if history.changes.primary_color %}
+                                                        <tr>
+                                                            <td><strong>Warna Utama</strong></td>
+                                                            <td>
+                                                                <span style="display: inline-block; width: 24px; height: 24px; background-color: {{ history.changes.primary_color }}; border: 1px solid #ccc; vertical-align: middle;"></span>
+                                                                {{ history.changes.primary_color }}
+                                                            </td>
+                                                        </tr>
+                                                    {% endif %}
+                                                    {% if history.changes.secondary_color %}
+                                                        <tr>
+                                                            <td><strong>Warna Sekunder</strong></td>
+                                                            <td>
+                                                                <span style="display: inline-block; width: 24px; height: 24px; background-color: {{ history.changes.secondary_color }}; border: 1px solid #ccc; vertical-align: middle;"></span>
+                                                                {{ history.changes.secondary_color }}
+                                                            </td>
+                                                        </tr>
+                                                    {% endif %}
+                                                    {% if history.changes.font_family %}
+                                                        <tr>
+                                                            <td><strong>Font</strong></td>
+                                                            <td style="font-family: {{ history.changes.font_family }}, sans-serif;">
+                                                                {{ history.changes.font_family }}
+                                                            </td>
+                                                        </tr>
+                                                    {% endif %}
+                                                    {% if history.changes.font_size_base %}
+                                                        <tr>
+                                                            <td><strong>Ukuran Font</strong></td>
+                                                            <td>{{ history.changes.font_size_base }}px</td>
+                                                        </tr>
+                                                    {% endif %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    {% else %}
+                                        <p class="text-muted">Tidak ada informasi perubahan yang tersedia</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="alert alert-info mt-4">
+                        <h6>📊 Statistik Audit Trail</h6>
+                        <p class="mb-0">
+                            Total perubahan: <strong>{{ modification_history|length }}</strong>
+                        </p>
+                    </div>
+                {% else %}
+                    <div class="alert alert-warning">
+                        <h5>📝 Belum Ada Perubahan</h5>
+                        <p>Tema belum pernah diubah. Perubahan akan muncul di sini setelah Anda mengubah tema.</p>
+                    </div>
+                {% endif %}
+
+                <hr>
+
+                <div class="row">
+                    <div class="col-6">
+                        <a href="{% url 'group_bio:index' %}" class="btn btn-secondary">
+                            ← Kembali ke Beranda
+                        </a>
+                    </div>
+                    <div class="col-6 text-end">
+                        <a href="{% url 'group_bio:edit_theme' %}" class="btn btn-primary">
+                            ✏️ Ubah Tema
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Security Explanation -->
+        <div class="card shadow-sm mt-4">
+            <div class="card-header bg-warning">
+                <h5 class="mb-0">🔐 Penjelasan Audit Trail</h5>
+            </div>
+            <div class="card-body">
+                <p>
+                    <strong>Apa itu Audit Trail?</strong><br>
+                    Audit trail adalah catatan lengkap dari semua perubahan yang dilakukan pada sistem. 
+                    Dalam konteks tugas ini, kami mencatat:
+                </p>
+                <ul>
+                    <li><strong>Siapa</strong> yang melakukan perubahan (username)</li>
+                    <li><strong>Kapan</strong> perubahan dilakukan (timestamp)</li>
+                    <li><strong>Apa</strong> yang diubah (detail perubahan)</li>
+                </ul>
+                <p class="mt-3">
+                    <strong>Keuntungan Audit Trail:</strong><br>
+                    ✅ Akuntabilitas - Kita tahu siapa yang mengubah apa<br>
+                    ✅ Keamanan - Dapat mendeteksi aktivitas mencurigakan<br>
+                    ✅ Compliance - Memenuhi kebutuhan regulasi dan kebijakan<br>
+                    ✅ Debugging - Membantu melacak masalah ke akarnya
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.timeline {
+    position: relative;
+    padding: 20px 0;
+}
+
+.timeline::before {
+    content: '';
+    position: absolute;
+    left: 30px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: #dee2e6;
+}
+
+.timeline .card {
+    margin-left: 60px;
+    position: relative;
+}
+
+.timeline .card::before {
+    content: '';
+    position: absolute;
+    left: -32px;
+    top: 15px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #0dcaf0;
+    border: 3px solid white;
+}
+</style>
+{% endblock %}

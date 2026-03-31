@@ -1,7 +1,12 @@
-django
+django==6.0.3
 gunicorn
 whitenoise
 psycopg2-binary
 requests
 urllib3
 python-dotenv
+django-allauth
+google-auth-oauthlib
+google-auth-httplib2
+google-auth
+PyJWT

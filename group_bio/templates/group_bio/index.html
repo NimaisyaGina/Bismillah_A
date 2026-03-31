@@ -1,0 +1,223 @@
+{% extends "group_bio/base.html" %}
+
+{% block title %}Beranda - Bismillah Group A{% endblock %}
+
+{% block content %}
+<div class="row mb-5">
+    <div class="col-lg-8">
+        <!-- Biodata Kelompok Card -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-header">
+                <h3 class="mb-0">📚 {{ group_info.group_name }}</h3>
+            </div>
+            <div class="card-body">
+                <p class="text-muted">
+                    <strong>Mata Kuliah:</strong> {{ group_info.class_name }}
+                </p>
+                <p class="text-muted">
+                    <strong>Tahun:</strong> {{ group_info.year }}
+                </p>
+                <div class="alert alert-info">
+                    <h5>📖 Deskripsi Kelompok</h5>
+                    <p>
+                        {{ group_info.description|default:"Website ini dibuat sebagai tugas mata kuliah Pengantar Keamanan Perangkat Lunak. Fokus utama adalah implementasi Authentication & Authorization menggunakan OAuth 2.0 dengan Google sebagai identity provider." }}
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Task Overview -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-header">
+                <h4 class="mb-0">✅ Persyaratan Tugas</h4>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6 class="text-primary">🟢 Selesai:</h6>
+                        <ul>
+                            <li>✅ Website dengan biodata kelompok (publik)</li>
+                            <li>✅ OAuth 2.0 dengan Google</li>
+                            <li>✅ Autentikasi via Google</li>
+                            <li>✅ Authorization checks</li>
+                            <li>✅ Audit logging</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="text-primary">🎨 Fitur Tambahan:</h6>
+                        <ul>
+                            <li>🎨 Kustomisasi Tema (warna, font)</li>
+                            <li>🔒 CSRF Protection</li>
+                            <li>📋 Modification history</li>
+                            <li>🔐 Secure session handling</li>
+                            <li>📊 Audit trail komprehensif</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Security Implementation -->
+        <div class="card shadow-sm">
+            <div class="card-header bg-danger">
+                <h4 class="mb-0">🔐 Implementasi Keamanan</h4>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6>Authentication:</h6>
+                        <ul>
+                            <li>OAuth 2.0 Flow dengan Google</li>
+                            <li>django-allauth untuk OAuth handling</li>
+                            <li>Secure token management</li>
+                            <li>Protected routes dengan @login_required</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Authorization:</h6>
+                        <ul>
+                            <li>GroupMember model untuk validation</li>
+                            <li>Authorization checks di views</li>
+                            <li>Hanya GroupMember bisa edit tema</li>
+                            <li>Audit trail untuk setiap perubahan</li>
+                        </ul>
+                    </div>
+                </div>
+                <hr>
+                <h6>Additional Security Measures:</h6>
+                <ul>
+                    <li>🛡️ CSRF Protection (@csrf_protect decorator)</li>
+                    <li>🔒 HTTPOnly & Secure session cookies</li>
+                    <li>✔️ SameSite cookie policy</li>
+                    <li>📝 Input validation & sanitization</li>
+                    <li>🚀 Environment variables untuk credentials</li>
+                    <li>📊 Comprehensive audit logging</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="col-lg-4">
+        <!-- Quick Stats -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">📊 Statistik</h5>
+            </div>
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-6">
+                        <h3 class="text-primary">
+                            {{ members.count }}
+                        </h3>
+                        <p class="text-muted">Anggota Kelompok</p>
+                    </div>
+                    <div class="col-6">
+                        <h3 class="text-success">
+                            {% if user.is_authenticated %}✅{% else %}🔒{% endif %}
+                        </h3>
+                        <p class="text-muted">
+                            {% if user.is_authenticated %}
+                                Terautentikasi
+                            {% else %}
+                                Belum Login
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Theme Info -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">🎨 Tema Saat Ini</h5>
+            </div>
+            <div class="card-body">
+                <p><strong>Font:</strong> {{ theme.font_family }}</p>
+                <p><strong>Ukuran Font:</strong> {{ theme.font_size_base }}px</p>
+                <p>
+                    <strong>Warna Utama:</strong><br>
+                    <span style="display: inline-block; width: 20px; height: 20px; background-color: {{ theme.primary_color }}; border: 1px solid #ccc;"></span>
+                    {{ theme.primary_color }}
+                </p>
+                <p>
+                    <strong>Warna Aksen:</strong><br>
+                    <span style="display: inline-block; width: 20px; height: 20px; background-color: {{ theme.accent_color }}; border: 1px solid #ccc;"></span>
+                    {{ theme.accent_color }}
+                </p>
+                {% if can_edit_theme %}
+                    <a href="{% url 'group_bio:edit_theme' %}" class="btn btn-edit-theme btn-sm w-100">
+                        ✏️ Ubah Tema
+                    </a>
+                {% else %}
+                    <p class="text-muted text-center mt-3">
+                        Login sebagai anggota kelompok untuk mengubah tema
+                    </p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Login Info -->
+        {% if not user.is_authenticated %}
+        <div class="card shadow-sm bg-light">
+            <div class="card-body">
+                <h5 class="card-title">🔐 Fitur untuk Anggota</h5>
+                <p class="card-text">
+                    Hanya anggota kelompok yang telah login dengan Google dapat:
+                </p>
+                <ul class="small">
+                    <li>Mengubah warna tema</li>
+                    <li>Mengubah font</li>
+                    <li>Melihat riwayat perubahan</li>
+                </ul>
+                <a href="{% url 'account_login' %}" class="btn btn-primary w-100">
+                    Login dengan Google
+                </a>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Members Preview -->
+<div class="row">
+    <div class="col-12">
+        <div class="card shadow-sm">
+            <div class="card-header">
+                <h4 class="mb-0">👥 Anggota Kelompok</h4>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    {% for member in members %}
+                        <div class="col-md-6 col-lg-4 mb-3">
+                            <div class="card member-card">
+                                <div class="card-body text-center">
+                                    {% if member.profile_image %}
+                                        <img src="{{ member.profile_image }}" alt="{{ member.full_name }}" 
+                                             class="rounded-circle mb-2" width="60" height="60">
+                                    {% else %}
+                                        <div class="rounded-circle bg-secondary d-inline-flex align-items-center justify-content-center mb-2"
+                                             style="width: 60px; height: 60px; color: white;">
+                                            👤
+                                        </div>
+                                    {% endif %}
+                                    <h6 class="card-title">{{ member.full_name }}</h6>
+                                    <div class="member-role">{{ member.get_role_display }}</div>
+                                    <p class="card-text text-muted small">NIM: {{ member.nim }}</p>
+                                    {% if member.bio %}
+                                        <p class="card-text small">{{ member.bio|truncatewords:15 }}</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+                <a href="{% url 'group_bio:members' %}" class="btn btn-outline-primary mt-3">
+                    Lihat Semua Anggota →
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
