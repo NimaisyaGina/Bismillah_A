@@ -71,18 +71,19 @@ def create_theme():
         print("⚠️  GroupTheme already exists")
 
 def create_sample_members():
-    """Buat sample anggota group"""
+    """Buat anggota group Bismillah A"""
     admin_user = User.objects.get(username='admin')
     
+    # Data anggota kelompok Bismillah A
     sample_members = [
         {
             'user': admin_user,
-            'nim': '12345001',
-            'full_name': 'Admin User (Ketua)',
-            'email': 'admin@example.com',
-            'phone': '08123456789',
+            'nim': '2406429885',
+            'full_name': 'Nimaisya Gina Herapati',
+            'email': 'nimaisya@example.com',
+            'phone': '',
             'role': 'ketua',
-            'bio': 'Ketua kelompok - Bertanggung jawab atas koordinasi proyek',
+            'bio': 'Ketua kelompok - Pengantar Keamanan Perangkat Lunak',
         },
     ]
     
@@ -103,9 +104,9 @@ def create_sample_members():
             created_count += 1
     
     if created_count > 0:
-        print(f"✅ {created_count} sample GroupMember(s) created")
+        print(f"✅ {created_count} GroupMember(s) created")
     else:
-        print("⚠️  All sample members already exist")
+        print("⚠️  All members already exist")
 
 if __name__ == '__main__':
     print("🔧 Setting up initial data...\n")
