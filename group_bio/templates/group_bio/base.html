@@ -162,14 +162,17 @@
                                     <li><hr class="dropdown-divider"></li>
                                 {% endif %}
                                 <li>
-                                    <a class="dropdown-item" href="{% url 'account_logout' %}">Logout</a>
+                                    <form action="{% url 'account_logout' %}" method="post" class="px-3 py-1">
+                                        {% csrf_token %}
+                                        <button type="submit" class="dropdown-item px-0">Logout</button>
+                                    </form>
                                 </li>
                             </ul>
                         </li>
                     {% else %}
                         <li class="nav-item">
                             <a class="nav-link btn btn-primary text-white ms-2" href="{% url 'account_login' %}">
-                                Login dengan Google
+                                Login
                             </a>
                         </li>
                     {% endif %}
@@ -206,7 +209,8 @@
                     <strong>🔒 Status: Belum login</strong><br>
                     Anda dapat melihat biodata kelompok. 
                     <a href="{% url 'account_login' %}" class="btn btn-sm btn-primary">Login</a>
-                    untuk mengubah tema (hanya untuk anggota kelompok).
+                    atau <a href="{% url 'account_signup' %}" class="btn btn-sm btn-outline-primary">Daftar</a>
+                    untuk mengakses fitur anggota.
                 </div>
             {% endif %}
 

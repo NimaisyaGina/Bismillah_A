@@ -38,9 +38,9 @@
                                     <div class="mb-2">
                                         <span class="member-role">
                                             {% if member.role == 'ketua' %}
-                                                👑 {{ member.get_role_display }}
+                                                👑 {{ member.display_role }}
                                             {% else %}
-                                                👤 {{ member.get_role_display }}
+                                                👤 {{ member.display_role }}
                                             {% endif %}
                                         </span>
                                     </div>
@@ -50,9 +50,11 @@
                                         <p class="mb-2">
                                             <strong>NIM:</strong> {{ member.nim }}
                                         </p>
-                                        <p class="mb-2">
-                                            <strong>Email:</strong> <a href="mailto:{{ member.email }}">{{ member.email }}</a>
-                                        </p>
+                                        {% if member.email %}
+                                            <p class="mb-2">
+                                                <strong>Email:</strong> <a href="mailto:{{ member.email }}">{{ member.email }}</a>
+                                            </p>
+                                        {% endif %}
                                         {% if member.phone %}
                                             <p class="mb-2">
                                                 <strong>Telepon:</strong> {{ member.phone }}
@@ -67,9 +69,11 @@
                                     </div>
 
                                     <!-- Joined Date -->
-                                    <div class="text-muted text-center mt-3 pt-3" style="border-top: 1px solid #e9ecef;">
-                                        <small>Bergabung: {{ member.joined_at|date:"d/m/Y" }}</small>
-                                    </div>
+                                    {% if member.joined_at %}
+                                        <div class="text-muted text-center mt-3 pt-3" style="border-top: 1px solid #e9ecef;">
+                                            <small>Bergabung: {{ member.joined_at|date:"d/m/Y" }}</small>
+                                        </div>
+                                    {% endif %}
                                 </div>
                             </div>
                         </div>

@@ -1,131 +1,92 @@
-# 🔐 Bismillah Group A - Authentication & Authorization dengan OAuth 2.0
+# Website Biodata Kelompok + Google Sign-In
 
-**Tugas:** Pengantar Keamanan Perangkat Lunak  
-**Fokus:** Authentication & Authorization  
-**Technology:** Django, OAuth 2.0 (Google), django-allauth
+Project ini adalah aplikasi Django untuk tugas **Authentication & Authorization**:
 
-## 👥 Anggota Kelompok
+- Biodata kelompok bisa dilihat publik tanpa login.
+- Login memakai **Google Sign-In** melalui `django-allauth`.
+- Hanya email anggota yang ada di `GROUP_MEMBER_EMAILS` yang bisa masuk.
+- Hanya anggota yang lolos whitelist yang bisa mengubah tema.
 
-- **Nimaisya Gina Herapati** (2406429885) - Ketua
-- **Nadin Ananda** (2406351806)
-- **Felicia Evangeline** (2406437054)
-- **Flora Cahaya Putri** (2406350955)
+## Cara Kerja
 
-## ✨ Fitur Utama
+- User belum login: tetap bisa melihat biodata kelompok.
+- User login dengan email Google yang tidak ada di whitelist: akses ditolak.
+- User login dengan email Google yang ada di whitelist: bisa mengubah tema dan melihat riwayat perubahan.
 
-✅ **Website Biodata Kelompok** - Public, tanpa login  
-✅ **OAuth 2.0 dengan Google** - Secure authentication  
-✅ **Kustomisasi Tema** - Hanya untuk member yang login  
-✅ **Audit Trail** - Riwayat lengkap perubahan  
-✅ **CSRF Protection** - Security best practices  
+Tidak ada registrasi akun lokal manual. User langsung memakai akun Google masing-masing.
 
-## 🚀 Quick Start
+## Setup Google Cloud
 
-### 1. Setup
+1. Buka [Google Cloud Console](https://console.cloud.google.com/).
+2. Buat atau pilih project.
+3. Konfigurasi **OAuth consent screen**.
+4. Buat **OAuth Client ID** dengan tipe `Web application`.
+5. Tambahkan `Authorized redirect URIs` berikut:
+   - `http://127.0.0.1:8000/accounts/google/login/callback/`
+   - `http://localhost:8000/accounts/google/login/callback/`
+6. Simpan `Client ID` dan `Client Secret`.
 
-```bash
-# Clone & activate
-git clone <repo>
-cd Bismillah_A
-python3 -m venv env
-source env/bin/activate
+## Environment
 
-# Install & setup
-pip install -r requirements.txt
-python manage.py migrate
-python setup_initial_data.py
+Salin `.env.example` menjadi `.env`, lalu isi:
+
+```env
+GOOGLE_CLIENT_ID=isi_dari_google_cloud
+GOOGLE_CLIENT_SECRET=isi_dari_google_cloud
+GROUP_MEMBER_EMAILS=email1@gmail.com,email2@gmail.com,email3@gmail.com
 ```
 
-### 2. Run
+Catatan:
+- `GROUP_MEMBER_EMAILS` adalah whitelist email anggota kelompok.
+- Jika ada anggota yang belum bisa login, cek dulu apakah emailnya sudah masuk ke whitelist ini.
+
+## Menjalankan Project
+
+1. Aktifkan virtual environment.
+2. Install dependency:
+
+```bash
+pip install -r requirements.txt
+```
+
+3. Jalankan migrasi:
+
+```bash
+python manage.py migrate
+```
+
+4. Jalankan server:
 
 ```bash
 python manage.py runserver
 ```
 
-**Akses:**
-- Homepage: http://localhost:8000/
-- Admin: http://localhost:8000/admin/ (admin/admin123)
+5. Buka:
 
-## 🔐 Security Features
-
-1. **Authentication** - OAuth 2.0 dengan Google
-2. **Authorization** - GroupMember only dapat edit theme
-3. **CSRF Protection** - Token validation di semua forms
-4. **Audit Logging** - Track siapa mengubah apa & kapan
-5. **Input Validation** - Strict validation untuk semua input
-6. **Secure Sessions** - HTTPOnly, Secure, SameSite cookies
-
-## 📡 Endpoints
-
-### Public (Tanpa Login)
-- `/` - Homepage dengan biodata & anggota
-- `/members/` - Daftar anggota lengkap
-
-### Protected (Require GroupMember Login)
-- `/accounts/login/` - Login dengan Google
-- `/edit-theme/` - Edit warna & font (GroupMember only)
-- `/theme-history/` - Riwayat perubahan (GroupMember only)
-- `/admin/` - Admin panel (superuser only)
-
-## 📁 Structure
-
-```
-Bismillah_A/
-├── group_bio/               # Main app
-│   ├── models.py           # GroupMember, GroupTheme, GroupInfo
-│   ├── views.py            # Authorization + security
-│   ├── forms.py            # Input validation
-│   ├── admin.py            # Django admin
-│   ├── urls.py             # URL routing
-│   └── templates/          # HTML templates
-├── bismillah_a/            # Project config
-│   ├── settings.py         # OAuth + Security settings
-│   └── urls.py
-├── setup_initial_data.py   # Initialize default data
-├── add_group_members.py    # Add more members
-└── requirements.txt
+```text
+http://127.0.0.1:8000/
 ```
 
-## 🧪 Testing
+## Fitur Keamanan
 
-### Public Access (No Login)
+- **Authentication**: Google OAuth via `django-allauth`.
+- **Authorization**: hanya email dalam whitelist yang bisa login dan mengubah tema.
+- **CSRF Protection**: aktif pada form dan logout.
+- **Session Handling**: memakai session bawaan Django.
+- **Audit Trail**: perubahan tema disimpan ke `modification_history`.
+- **Input Validation**: warna, ukuran font, dan pilihan font divalidasi di server.
+
+## Testing
+
+Jalankan:
+
 ```bash
-curl http://localhost:8000/
-curl http://localhost:8000/members/
+python manage.py check
+python manage.py test group_bio
 ```
 
-### Protected Route (Login Required)
-```bash
-curl http://localhost:8000/edit-theme/
-# Expected: Redirect to login
-```
+## Catatan Penting
 
-### Authorization (GroupMember Only)
-- Login sebagai non-member → 403 Forbidden
-- Login sebagai GroupMember → 200 OK
-
-## 📚 Key Concepts
-
-### Authentication vs Authorization
-- **Authentication:** Verifikasi siapa user (OAuth 2.0)
-- **Authorization:** Verifikasi apa yang boleh user lakukan (GroupMember check)
-
-### Security Layers
-1. Login (@login_required)
-2. Authorization (GroupMember validation)
-3. CSRF Protection (@csrf_protect)
-4. Input Validation (regex, boundary checks)
-5. Audit Logging (modification history)
-
-## ⚙️ Credentials
-
-**Admin Account:**
-- Username: `admin`
-- Password: `admin123`
-
-⚠️ Change di production!
-
----
-
-**Status:** ✅ Selesai  
-**Version:** 1.0.0
+- Jangan commit `.env`.
+- Jika `Client Secret` pernah tersebar, segera regenerate di Google Cloud Console.
+- Gunakan host yang konsisten saat login. Untuk lokal, paling aman pakai `http://127.0.0.1:8000/`.

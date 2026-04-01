@@ -1,0 +1,45 @@
+{% extends "group_bio/base.html" %}
+{% load socialaccount %}
+
+{% block title %}Login | Bismillah Group A{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6 col-lg-5">
+        <div class="card shadow-sm border-0">
+            <div class="card-body p-4">
+                <h2 class="h4 mb-3 text-center">Login dengan Google</h2>
+                <p class="text-muted text-center">
+                    Pilih akun Google anggota kelompok yang sudah terdaftar.
+                </p>
+
+                {% if messages %}
+                    {% for message in messages %}
+                        {% if message.tags == 'error' %}
+                            <div class="alert alert-danger" role="alert">{{ message }}</div>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+
+                <a href="{% provider_login_url 'google' process='login' %}" class="btn btn-primary w-100 py-2">
+                    Lanjutkan dengan Google
+                </a>
+
+                <div class="text-center mt-3">
+                    <small class="text-muted">
+                        Hanya email anggota yang ada di whitelist yang bisa masuk.
+                    </small>
+                </div>
+
+                <div class="alert alert-light border mt-4 mb-0" role="alert">
+                    <strong>Catatan:</strong> jika Google menampilkan pilihan akun, pilih email anggota kelompok yang sudah didaftarkan di sistem.
+                </div>
+                <p class="text-center text-muted mt-3 mb-0">
+                    Belum pernah masuk?
+                    <a href="{% url 'account_signup' %}">Daftar dengan Google</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

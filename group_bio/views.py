@@ -1,16 +1,75 @@
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, redirect
 from django.http import JsonResponse, HttpResponseForbidden
+from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_http_methods
 from django.views.decorators.csrf import csrf_protect
 from django.contrib import messages
-from django.utils import timezone
 from django.db import transaction
-
 from .models import GroupInfo, GroupTheme, GroupMember
 import logging
+from types import SimpleNamespace
 
 logger = logging.getLogger(__name__)
+
+
+DEFAULT_GROUP_MEMBERS = [
+    {
+        'nim': '2406429885',
+        'full_name': 'Nimaisya Gina Herapati',
+        'email': 'ginanimaisya7@gmail.com',
+        'role': 'ketua',
+        'bio': 'Ketua kelompok Bismillah Group A.',
+    },
+    {
+        'nim': '2406351806',
+        'full_name': 'Nadin Ananda',
+        'email': 'nadinananda2006@gmail.com',
+        'role': 'anggota',
+        'bio': 'Anggota kelompok.',
+    },
+    {
+        'nim': '2406437054',
+        'full_name': 'Felicia Evangeline',
+        'email': 'feliciaeva1503@gmail.com',
+        'role': 'anggota',
+        'bio': 'Anggota kelompok.',
+    },
+    {
+        'nim': '2406350955',
+        'full_name': 'Flora Cahaya Putri',
+        'email': 'floracahayaputri@gmail.com',
+        'role': 'anggota',
+        'bio': 'Anggota kelompok.',
+    },
+]
+
+
+def _build_public_members():
+    existing_members = {
+        member.email.strip().lower(): member
+        for member in GroupMember.objects.all()
+        if member.email
+    }
+
+    public_members = []
+    for item in DEFAULT_GROUP_MEMBERS:
+        email_key = item['email'].strip().lower()
+        existing_member = existing_members.get(email_key) if email_key else None
+        public_members.append(
+            SimpleNamespace(
+                nim=item['nim'],
+                full_name=item['full_name'],
+                email=item['email'],
+                role=item['role'],
+                display_role='Ketua Kelompok' if item['role'] == 'ketua' else 'Anggota',
+                bio=(existing_member.bio if existing_member and existing_member.bio else item['bio']),
+                profile_image=(existing_member.profile_image if existing_member else ''),
+                joined_at=(existing_member.joined_at if existing_member else None),
+            )
+        )
+
+    return public_members
 
 
 def index_view(request):
@@ -28,13 +87,13 @@ def index_view(request):
     # Ambil tema yang ada
     theme = GroupTheme.get_or_create_theme()
     
-    # Ambil anggota kelompok
-    members = GroupMember.objects.all()
+    members = _build_public_members()
     
     context = {
         'group_info': group_info,
         'theme': theme,
         'members': members,
+        'member_count': len(members),
         'can_edit_theme': False,
     }
     
@@ -43,6 +102,47 @@ def index_view(request):
         context['can_edit_theme'] = theme.can_be_modified_by(request.user)
     
     return render(request, 'group_bio/index.html', context)
+
+
+@require_http_methods(["GET"])
+def login_view(request):
+    if request.user.is_authenticated:
+        return redirect('group_bio:index')
+
+    theme = GroupTheme.get_or_create_theme()
+    return render(
+        request,
+        'registration/login.html',
+        {
+            'theme': theme,
+            'can_edit_theme': False,
+        }
+    )
+
+
+@require_http_methods(["GET"])
+def signup_view(request):
+    if request.user.is_authenticated:
+        return redirect('group_bio:index')
+
+    theme = GroupTheme.get_or_create_theme()
+    return render(
+        request,
+        'registration/signup.html',
+        {
+            'theme': theme,
+            'can_edit_theme': False,
+        }
+    )
+
+
+@require_http_methods(["POST"])
+@csrf_protect
+def logout_view(request):
+    if request.user.is_authenticated:
+        logout(request)
+        messages.success(request, 'Kamu berhasil logout.')
+    return redirect('group_bio:index')
 
 
 @login_required(login_url='account_login')
@@ -186,13 +286,13 @@ def group_members_view(request):
     PUBLIC VIEW - Menampilkan daftar anggota kelompok
     SECURITY: Public data, tidak memerlukan login
     """
-    members = GroupMember.objects.all().order_by('-role', 'full_name')
+    members = _build_public_members()
     theme = GroupTheme.get_or_create_theme()
     
     context = {
         'members': members,
         'theme': theme,
-        'member_count': members.count(),
+        'member_count': len(members),
     }
     
     return render(request, 'group_bio/members.html', context)

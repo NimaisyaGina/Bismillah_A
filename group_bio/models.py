@@ -1,7 +1,6 @@
 from django.db import models
+from django.conf import settings
 from django.contrib.auth.models import User
-from django.core.exceptions import PermissionDenied
-import json
 
 
 class GroupMember(models.Model):
@@ -142,13 +141,8 @@ class GroupTheme(models.Model):
         """
         if not user or not user.is_authenticated:
             return False
-        
-        try:
-            group_member = GroupMember.objects.get(user=user)
-            # Hanya anggota kelompok yang terdaftar yang bisa modify
-            return True
-        except GroupMember.DoesNotExist:
-            return False
+
+        return user.email.strip().lower() in settings.ALLOWED_MEMBER_EMAILS
 
 
 class GroupInfo(models.Model):

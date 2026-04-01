@@ -108,7 +108,7 @@
                 <div class="row text-center">
                     <div class="col-6">
                         <h3 class="text-primary">
-                            {{ members.count }}
+                            {{ member_count }}
                         </h3>
                         <p class="text-muted">Anggota Kelompok</p>
                     </div>
@@ -171,9 +171,14 @@
                     <li>Mengubah font</li>
                     <li>Melihat riwayat perubahan</li>
                 </ul>
-                <a href="{% url 'account_login' %}" class="btn btn-primary w-100">
-                    Login dengan Google
-                </a>
+                <div class="d-grid gap-2">
+                    <a href="{% url 'account_login' %}" class="btn btn-primary w-100">
+                        Login
+                    </a>
+                    <a href="{% url 'account_signup' %}" class="btn btn-outline-primary w-100">
+                        Daftar Akun
+                    </a>
+                </div>
             </div>
         </div>
         {% endif %}
@@ -203,7 +208,7 @@
                                         </div>
                                     {% endif %}
                                     <h6 class="card-title">{{ member.full_name }}</h6>
-                                    <div class="member-role">{{ member.get_role_display }}</div>
+                                    <div class="member-role">{{ member.display_role }}</div>
                                     <p class="card-text text-muted small">NIM: {{ member.nim }}</p>
                                     {% if member.bio %}
                                         <p class="card-text small">{{ member.bio|truncatewords:15 }}</p>
