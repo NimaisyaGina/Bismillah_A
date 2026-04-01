@@ -83,16 +83,56 @@ def create_sample_members():
             'email': 'nimaisya@example.com',
             'phone': '',
             'role': 'ketua',
-            'bio': 'Ketua kelompok - Pengantar Keamanan Perangkat Lunak',
+            'bio': 'Ketua kelompok',
+        },
+        {
+            'user': None,
+            'nim': '2406351806',
+            'full_name': 'Nadin Ananda',
+            'email': 'nadin@example.com',
+            'phone': '',
+            'role': 'anggota',
+            'bio': 'Anggota kelompok',
+        },
+        {
+            'user': None,
+            'nim': '2406437054',
+            'full_name': 'Felicia Evangeline',
+            'email': 'felicia@example.com',
+            'phone': '',
+            'role': 'anggota',
+            'bio': 'Anggota kelompok',
+        },
+        {
+            'user': None,
+            'nim': '2406350955',
+            'full_name': 'Flora Cahaya Putri',
+            'email': 'flora@example.com',
+            'phone': '',
+            'role': 'anggota',
+            'bio': 'Anggota kelompok',
         },
     ]
     
     created_count = 0
-    for member_data in sample_members:
+    for idx, member_data in enumerate(sample_members):
+        user = member_data['user']
+        
+        # Jika tidak ada user, buat user baru
+        if user is None:
+            user, created = User.objects.get_or_create(
+                username=member_data['full_name'].lower().replace(' ', '_'),
+                defaults={
+                    'email': member_data['email'],
+                    'first_name': member_data['full_name'].split()[0],
+                    'last_name': ' '.join(member_data['full_name'].split()[1:]),
+                }
+            )
+        
         member, created = GroupMember.objects.get_or_create(
-            user=member_data['user'],
+            nim=member_data['nim'],
             defaults={
-                'nim': member_data['nim'],
+                'user': user,
                 'full_name': member_data['full_name'],
                 'email': member_data['email'],
                 'phone': member_data['phone'],
