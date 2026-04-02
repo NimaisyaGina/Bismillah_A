@@ -54,9 +54,9 @@ class GroupTheme(models.Model):
     """
     group_id = models.IntegerField(default=1, unique=True)
     
-    primary_color = models.CharField(max_length=7, default="#143f85") 
-    secondary_color = models.CharField(max_length=7, default='#0d2c5f') 
-    accent_color = models.CharField(max_length=7, default='#ff7c21') 
+    primary_color = models.CharField(max_length=7, default="#f4bae4") 
+    secondary_color = models.CharField(max_length=7, default="#aac6f2") 
+    accent_color = models.CharField(max_length=7, default="#ffc69d") 
     
     font_family = models.CharField(
         max_length=50,
