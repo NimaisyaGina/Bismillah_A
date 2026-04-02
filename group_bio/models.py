@@ -25,7 +25,6 @@ class GroupMember(models.Model):
     profile_image = models.ImageField(upload_to='profile_images/', blank=True, null=True)
     joined_at = models.DateTimeField(auto_now_add=True)
     
-    # Security audit logging
     last_modified_by = models.ForeignKey(
         User, 
         on_delete=models.SET_NULL, 
@@ -53,15 +52,12 @@ class GroupTheme(models.Model):
     - Timestamp perubahan untuk audit trail
     - Satu theme per grup (singleton pattern)
     """
-    # Identifikasi grup (bisa diperluas untuk multi-group support)
     group_id = models.IntegerField(default=1, unique=True)
     
-    # Theme configuration
-    primary_color = models.CharField(max_length=7, default='#3498db')  # Hex color
-    secondary_color = models.CharField(max_length=7, default='#2c3e50')
-    accent_color = models.CharField(max_length=7, default='#e74c3c')
+    primary_color = models.CharField(max_length=7, default="#a9dafa") 
+    secondary_color = models.CharField(max_length=7, default='#f8dff0') 
+    accent_color = models.CharField(max_length=7, default='#ffe9c9') 
     
-    # Font settings
     font_family = models.CharField(
         max_length=50,
         choices=[
@@ -77,11 +73,9 @@ class GroupTheme(models.Model):
     )
     font_size_base = models.IntegerField(default=16, help_text="Base font size in pixels")
     
-    # Additional styling
-    background_color = models.CharField(max_length=7, default='#ffffff')
-    text_color = models.CharField(max_length=7, default='#333333')
+    background_color = models.CharField(max_length=7, default='#f3f7ff')
+    text_color = models.CharField(max_length=7, default='#1c2a4d')
     
-    # Audit logging
     last_modified_by = models.ForeignKey(
         User,
         on_delete=models.SET_NULL,
@@ -111,7 +105,6 @@ class GroupTheme(models.Model):
         if user:
             self.last_modified_by = user
             
-            # Tambah ke history
             if not self.modification_history:
                 self.modification_history = []
             
@@ -121,6 +114,8 @@ class GroupTheme(models.Model):
                 'changes': {
                     'primary_color': self.primary_color,
                     'secondary_color': self.secondary_color,
+                    'accent_color': self.accent_color,
+                    'text_color': self.text_color,
                     'font_family': self.font_family,
                     'font_size_base': self.font_size_base,
                 }
@@ -142,7 +137,10 @@ class GroupTheme(models.Model):
         if not user or not user.is_authenticated:
             return False
 
-        return user.email.strip().lower() in settings.ALLOWED_MEMBER_EMAILS
+        if user.email and user.email.strip().lower() in settings.ALLOWED_MEMBER_EMAILS:
+            return True
+
+        return GroupMember.objects.filter(user=user).exists()
 
 
 class GroupInfo(models.Model):

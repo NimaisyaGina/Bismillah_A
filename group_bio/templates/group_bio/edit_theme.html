@@ -2,43 +2,88 @@
 {% block title %}Edit Tema - Bismillah A{% endblock %}
 {% block content %}
 <section>
-    <h2 class="section-title"><i class="bi bi-palette me-2"></i>Edit Visual Theme</h2>
-    <div class="alert alert-info"><i class="bi bi-info-circle me-1"></i>Fitur ini hanya untuk authorized users (setelah login via Google OAuth). Semua perubahan direkam untuk audit security.</div>
+    <h2 class="section-title"><i class="bi bi-palette me-2"></i>Ubah Tema Website</h2>
+    <div class="alert alert-info"><i class="bi bi-info-circle me-1"></i>Sesuaikan tampilan website sesuai preferensi Anda. Semua perubahan akan langsung terlihat dan tercatat.</div>
     <div class="panel">
-        <p><i class="bi bi-brush me-1"></i>Sesuaikan tampilan website sesuai preferensi, perubahan akan diterapkan real-time dan tercatat dalam riwayat.</p>
         <form method="post">
             {% csrf_token %}
-            <div class="row g-3">
-                <div class="col-md-6"><label class="form-label" for="primary_color"><i class="bi bi-circle-fill text-primary me-1"></i>Warna Primary</label><input id="primary_color" class="form-control" type="color" name="primary_color" value="{{ theme.primary_color }}"></div>
-                <div class="col-md-6"><label class="form-label" for="secondary_color"><i class="bi bi-circle-fill text-secondary me-1"></i>Warna Secondary</label><input id="secondary_color" class="form-control" type="color" name="secondary_color" value="{{ theme.secondary_color }}"></div>
-                <div class="col-md-6"><label class="form-label" for="accent_color"><i class="bi bi-circle-fill text-warning me-1"></i>Warna Accent</label><input id="accent_color" class="form-control" type="color" name="accent_color" value="{{ theme.accent_color }}"></div>
-                <div class="col-md-6"><label class="form-label" for="background_color"><i class="bi bi-circle-fill text-muted me-1"></i>Warna Background</label><input id="background_color" class="form-control" type="color" name="background_color" value="{{ theme.background_color }}"></div>
-                <div class="col-md-6"><label class="form-label" for="text_color"><i class="bi bi-type me-1"></i>Warna Teks</label><input id="text_color" class="form-control" type="color" name="text_color" value="{{ theme.text_color }}"></div>
-                <div class="col-md-6"><label class="form-label" for="font_family"><i class="bi bi-fonts me-1"></i>Font</label><select id="font_family" name="font_family" class="form-select">{% for font in font_choices %}<option value="{{ font }}" {% if font == theme.font_family %}selected{% endif %}>{{ font }}</option>{% endfor %}</select></div>
-                <div class="col-md-6"><label class="form-label" for="font_size_base"><i class="bi bi-textarea-resize me-1"></i>Ukuran Font</label><input id="font_size_base" class="form-control" type="number" name="font_size_base" min="10" max="30" value="{{ theme.font_size_base }}"></div>
+            
+            
+            <div class="mb-4">
+                <h5 class="mb-3"><i class="bi bi-fonts me-2"></i>Pilihan Font</h5>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label" for="font_family">Jenis Font</label>
+                        <select id="font_family" name="font_family" class="form-select">
+                            {% for font in font_choices %}
+                                <option value="{{ font }}" {% if font == theme.font_family %}selected{% endif %}>{{ font }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label" for="font_size_base">Ukuran Font (px)</label>
+                        <input id="font_size_base" class="form-control" type="number" name="font_size_base" min="10" max="30" value="{{ theme.font_size_base }}">
+                    </div>
+                </div>
             </div>
-            <div class="mt-3 text-end">
-                <a href="{% url 'group_bio:index' %}" class="btn btn-outline-primary me-2"><i class="bi bi-x-circle me-1"></i>Batal</a>
-                <button class="btn btn-primary" type="submit"><i class="bi bi-check-circle me-1"></i>Simpan</button>
+
+            <hr>
+
+            
+            <div class="mb-4">
+                <h5 class="mb-3"><i class="bi bi-type me-2"></i>Warna Font</h5>
+                <p class="text-muted small mb-3">Pilih warna untuk teks dan konten</p>
+                <div class="row justify-content-center">
+                    <div class="col-md-3 text-center">
+                        <input id="text_color" class="form-control form-control-color mx-auto" type="color" name="text_color" value="{{ theme.text_color }}" style="height: 60px; width: 100px;">
+                    </div>
+                </div>
+            </div>
+
+            <hr>
+
+            
+            <div class="mb-4">
+                <h5 class="mb-3"><i class="bi bi-image me-2"></i>Warna Background (Aurora)</h5>
+                <p class="text-muted small mb-4">Pilih 3 warna yang akan membentuk gradient animasi di background</p>
+                <div class="row g-4 justify-content-center">
+                    <div class="col-md-3 text-center">
+                        <label class="form-label d-block" for="primary_color">Warna 1</label>
+                        <input id="primary_color" class="form-control form-control-color mx-auto" type="color" name="primary_color" value="{{ theme.primary_color }}" style="height: 60px; width: 100px;">
+                    </div>
+                    <div class="col-md-3 text-center">
+                        <label class="form-label d-block" for="secondary_color">Warna 2</label>
+                        <input id="secondary_color" class="form-control form-control-color mx-auto" type="color" name="secondary_color" value="{{ theme.secondary_color }}" style="height: 60px; width: 100px;">
+                    </div>
+                    <div class="col-md-3 text-center">
+                        <label class="form-label d-block" for="accent_color">Warna 3</label>
+                        <input id="accent_color" class="form-control form-control-color mx-auto" type="color" name="accent_color" value="{{ theme.accent_color }}" style="height: 60px; width: 100px;">
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-4 text-end">
+                <a href="{% url 'group_bio:index' %}" class="btn btn-outline-secondary me-2"><i class="bi bi-x-circle me-1"></i>Batal</a>
+                <button class="btn btn-primary" type="submit"><i class="bi bi-check-circle me-1"></i>Simpan Perubahan</button>
             </div>
         </form>
     </div>
 </section>
 
 <section class="mt-5">
-    <h2 class="section-title"><i class="bi bi-eye me-2"></i>Theme Preview Tips</h2>
+    <h2 class="section-title"><i class="bi bi-info-circle me-2"></i>Tips Memilih Tema</h2>
     <div class="info-cards">
         <article class="panel">
-            <h3 class="mb-2"><i class="bi bi-lightbulb text-warning"></i>Color Harmony</h3>
-            <p>Pilih kombinasi warna yang kontras untuk readability, hindari warna yang terlalu mencolok agar tetap profesional.</p>
+            <h3 class="mb-2"><i class="bi bi-fonts text-info"></i>Font</h3>
+            <p>Pilih font yang mudah dibaca. Poppins cocok untuk tampilan modern, Arial untuk klasik.</p>
         </article>
         <article class="panel">
-            <h3 class="mb-2"><i class="bi bi-fonts text-info"></i>Font Selection</h3>
-            <p>Inter cocok untuk header, Poppins untuk body text. Pastikan ukuran font sesuai dengan accessibility standards.</p>
+            <h3 class="mb-2"><i class="bi bi-type text-success"></i>Warna Teks</h3>
+            <p>Pastikan warna teks kontras dengan background agar mudah dibaca.</p>
         </article>
         <article class="panel">
-            <h3 class="mb-2"><i class="bi bi-shield-check text-success"></i>Security Note</h3>
-            <p>Semua perubahan tema tercatat dalam audit log untuk memastikan accountability dalam tugas security.</p>
+            <h3 class="mb-2"><i class="bi bi-palette text-warning"></i>Warna Background</h3>
+            <p>Ketiga warna akan membentuk gradient yang bergerak lembut. Pilih warna pastel untuk kesan lembut.</p>
         </article>
     </div>
 </section>

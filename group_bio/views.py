@@ -7,6 +7,8 @@ from django.views.decorators.csrf import csrf_protect
 from django.contrib import messages
 from django.db import transaction
 from .models import GroupInfo, GroupTheme, GroupMember
+from django.conf import settings
+from pathlib import Path
 import logging
 from types import SimpleNamespace
 
@@ -30,7 +32,7 @@ DEFAULT_GROUP_MEMBERS = [
     },
     {
         'nim': '2406437054',
-        'full_name': 'Felicia Evangeline Mubarun',
+        'full_name': 'Felicia Evangeline',
         'email': 'feliciaeva1503@gmail.com',
         'role': 'anggota',
         'bio': 'Anggota kelompok.',
@@ -52,10 +54,68 @@ def _build_public_members():
         if member.email
     }
 
+    def _find_media_profile(item):
+        folder = Path(settings.MEDIA_ROOT) / 'profile_images'
+        if not folder.exists():
+            return None
+
+        email_key = item['email'].split('@')[0].lower() if item.get('email') else ''
+        first_name = item.get('full_name', '').split()[0].lower() if item.get('full_name') else ''
+        normalized_name = ''.join(item.get('full_name', '').lower().split())
+
+        for ext in ['png', 'jpg', 'jpeg', 'gif', 'webp']:
+            candidates = [
+                folder / f"{item['nim']}.{ext}",
+            ]
+            if email_key:
+                candidates.append(folder / f"{email_key}.{ext}")
+            if first_name:
+                candidates.append(folder / f"{first_name}.{ext}")
+            if normalized_name:
+                candidates.append(folder / f"{normalized_name}.{ext}")
+
+            for path in candidates:
+                if path.exists():
+                    return path
+
+        for path in folder.iterdir():
+            if path.is_file():
+                name_lower = path.stem.lower()
+                if name_lower == first_name or name_lower == email_key or name_lower == normalized_name:
+                    return path
+        
+        for path in folder.iterdir():
+            if path.is_file():
+                name_lower = path.stem.lower()
+                if (
+                    (email_key and email_key in name_lower)
+                    or (first_name and first_name in name_lower)
+                    or (normalized_name and normalized_name in name_lower)
+                    or (item['nim'] in name_lower)
+                ):
+                    return path
+
+        return None
+
     public_members = []
     for item in DEFAULT_GROUP_MEMBERS:
         email_key = item['email'].strip().lower()
         existing_member = existing_members.get(email_key) if email_key else None
+
+        profile_image = None
+        if existing_member and existing_member.profile_image:
+            try:
+                profile_image_url = existing_member.profile_image.url
+                profile_image = SimpleNamespace(url=profile_image_url)
+            except Exception:
+                profile_image = None
+
+        if not profile_image:
+            found = _find_media_profile(item)
+            if found:
+                rel = found.relative_to(settings.MEDIA_ROOT).as_posix()
+                profile_image = SimpleNamespace(url=f"{settings.MEDIA_URL}{rel}")
+
         public_members.append(
             SimpleNamespace(
                 nim=item['nim'],
@@ -64,7 +124,7 @@ def _build_public_members():
                 role=item['role'],
                 display_role='Ketua Kelompok' if item['role'] == 'ketua' else 'Anggota',
                 bio=(existing_member.bio if existing_member and existing_member.bio else item['bio']),
-                profile_image=(existing_member.profile_image if existing_member else ''),
+                profile_image=profile_image or '',
                 joined_at=(existing_member.joined_at if existing_member else None),
             )
         )
@@ -84,7 +144,6 @@ def index_view(request):
     except GroupInfo.DoesNotExist:
         group_info = None
     
-    # Ambil tema yang ada
     theme = GroupTheme.get_or_create_theme()
     
     members = _build_public_members()
@@ -97,7 +156,6 @@ def index_view(request):
         'can_edit_theme': False,
     }
     
-    # Jika user sudah login, check apakah dia bisa edit theme
     if request.user.is_authenticated:
         context['can_edit_theme'] = theme.can_be_modified_by(request.user)
     
@@ -163,7 +221,6 @@ def edit_theme_view(request):
     
     theme = GroupTheme.get_or_create_theme()
     
-    # AUTHORIZATION CHECK: Verifikasi user adalah GroupMember
     if not theme.can_be_modified_by(request.user):
         logger.warning(
             f"Unauthorized theme edit attempt by user: {request.user.username} ({request.user.id})",
@@ -184,21 +241,17 @@ def edit_theme_view(request):
     elif request.method == 'POST':
         try:
             with transaction.atomic():
-                # Ambil data dari form dengan validasi
                 primary_color = request.POST.get('primary_color', theme.primary_color)
                 secondary_color = request.POST.get('secondary_color', theme.secondary_color)
                 accent_color = request.POST.get('accent_color', theme.accent_color)
-                background_color = request.POST.get('background_color', theme.background_color)
                 text_color = request.POST.get('text_color', theme.text_color)
                 font_family = request.POST.get('font_family', theme.font_family)
                 font_size_base = request.POST.get('font_size_base', theme.font_size_base)
                 
-                # Validasi color format (basic hex validation)
                 colors = {
                     'primary_color': primary_color,
                     'secondary_color': secondary_color,
                     'accent_color': accent_color,
-                    'background_color': background_color,
                     'text_color': text_color,
                 }
                 
@@ -209,13 +262,12 @@ def edit_theme_view(request):
                             'error': f'Invalid color format for {color_name}'
                         }, status=400)
                 
-                # Validasi font size
                 try:
                     font_size_base = int(font_size_base)
-                    if font_size_base < 8 or font_size_base > 32:
+                    if font_size_base < 10 or font_size_base > 30:
                         return JsonResponse({
                             'success': False,
-                            'error': 'Font size must be between 8 and 32 pixels'
+                            'error': 'Font size must be between 10 and 30 pixels'
                         }, status=400)
                 except (ValueError, TypeError):
                     return JsonResponse({
@@ -223,7 +275,6 @@ def edit_theme_view(request):
                         'error': 'Invalid font size'
                     }, status=400)
                 
-                # Validasi font family
                 valid_fonts = [choice[0] for choice in GroupTheme._meta.get_field('font_family').choices]
                 if font_family not in valid_fonts:
                     return JsonResponse({
@@ -231,32 +282,33 @@ def edit_theme_view(request):
                         'error': 'Invalid font family'
                     }, status=400)
                 
-                # Update theme
                 theme.primary_color = primary_color
                 theme.secondary_color = secondary_color
                 theme.accent_color = accent_color
-                theme.background_color = background_color
                 theme.text_color = text_color
                 theme.font_family = font_family
                 theme.font_size_base = font_size_base
                 
-                # Save dengan audit trail
                 theme.save_with_audit(request.user)
                 
-                # Log untuk audit
                 logger.info(
                     f"Theme updated by: {request.user.username}",
                     extra={
                         'user_id': request.user.id,
                         'action': 'theme_updated',
-                        'colors': {k: v for k, v in colors.items()},
+                        'aurora_colors': {
+                            'warna_1': primary_color,
+                            'warna_2': secondary_color,
+                            'warna_3': accent_color,
+                        },
                         'font_family': font_family,
                         'font_size': font_size_base,
+                        'text_color': text_color,
                     }
                 )
                 
                 messages.success(request, 'Tema berhasil diubah!')
-                return redirect('index')
+                return redirect('group_bio:index')
         
         except Exception as e:
             logger.error(
@@ -268,6 +320,31 @@ def edit_theme_view(request):
                 'success': False,
                 'error': 'Terjadi kesalahan saat mengubah tema'
             }, status=500)
+
+
+@login_required(login_url='account_login')
+def reset_theme_view(request):
+    """
+    RESET THEME TO DEFAULT - PROTECTED ROUTE
+    Reset tema ke nilai default awal dengan warna aurora soft.
+    """
+    theme = GroupTheme.get_or_create_theme()
+    
+    if not theme.can_be_modified_by(request.user):
+        return HttpResponseForbidden("Anda tidak memiliki izin untuk reset tema.")
+    
+    theme.primary_color = '#c2e7ff'    
+    theme.secondary_color = '#f8dff0'  
+    theme.accent_color = '#ffe9c9'     
+    theme.background_color = '#f4f7ff'  
+    theme.text_color = '#1c2a4d'
+    theme.font_family = 'Poppins'
+    theme.font_size_base = 16
+    
+    theme.save_with_audit(request.user)
+    
+    messages.success(request, 'Tema telah direset ke default.')
+    return redirect('group_bio:index')
 
 
 def _is_valid_hex_color(color_code):
@@ -335,6 +412,13 @@ def theme_history_view(request):
     
     if not theme.can_be_modified_by(request.user):
         return HttpResponseForbidden("Tidak memiliki akses ke audit log")
+    
+    if request.method == 'POST':
+        if request.POST.get('action') == 'clear_history':
+            theme.modification_history = []
+            theme.save()
+            messages.success(request, 'Riwayat perubahan tema telah dihapus.')
+            return redirect('group_bio:theme_history')
     
     context = {
         'theme': theme,

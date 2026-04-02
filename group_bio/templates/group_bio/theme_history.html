@@ -2,43 +2,62 @@
 {% block title %}Riwayat Tema - Bismillah A{% endblock %}
 {% block content %}
 <section>
-    <h2 class="section-title"><i class="bi bi-clock-history me-2"></i>Theme Change History</h2>
-    <div class="alert alert-warning"><i class="bi bi-shield-exclamation me-1"></i>Riwayat ini mencatat semua modifikasi untuk audit security dan accountability dalam tugas Keamanan Perangkat Lunak.</div>
+    <div class="mb-4 pb-3">
+        <a href="{% url 'group_bio:index' %}" class="btn btn-outline-primary">
+            <i class="bi bi-arrow-left me-1"></i>Kembali
+        </a>
+    </div>
+
+    <h2 class="section-title"><i class="bi bi-clock-history me-2"></i>Riwayat Perubahan Tema</h2>
+    <div class="alert alert-info"><i class="bi bi-info-circle me-1"></i>Daftar lengkap semua perubahan tema yang telah dilakukan untuk audit security.</div>
     {% if modification_history %}
-        <div class="info-cards">
+        <div class="mb-3 text-end">
+            <form method="post" style="display: inline;">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="clear_history">
+                <button type="submit" class="btn btn-outline-danger btn-sm" onclick="return confirm('Yakin ingin menghapus semua riwayat?')">
+                    <i class="bi bi-trash me-1"></i>Hapus Semua History
+                </button>
+            </form>
+        </div>
+    {% endif %}
+    {% if modification_history %}
+        <div style="max-width: 800px;">
             {% for item in modification_history reversed %}
-                <article class="panel">
-                    <p class="mb-1"><i class="bi bi-person-fill me-1"></i><strong>{{ item.modified_by }}</strong> / <i class="bi bi-calendar-event me-1"></i>{{ item.modified_at }}</p>
-                    <p class="small"><i class="bi bi-pencil-square me-1"></i>Perubahan: {{ item.changes|length }} field</p>
-                    <ul class="small mb-0">
-                        {% for key, value in item.changes.items %}
-                            <li><i class="bi bi-dot me-1"></i><strong>{{ key|title }}:</strong> {{ value }}</li>
-                        {% endfor %}
-                    </ul>
-                </article>
+                <div class="panel mb-3">
+                    <div>
+                        <p class="mb-2"><strong>{{ item.modified_by }}</strong></p>
+                        <p class="small text-muted mb-3"><i class="bi bi-calendar-event me-1"></i>{{ item.modified_at }}</p>
+                        <div class="small">
+                            {% for key, value in item.changes.items %}
+                                <div class="mb-1">
+                                    {% if key == 'primary_color' %}
+                                        <span class="badge bg-light text-dark">Warna 1 (Aurora): {{ value }}</span>
+                                    {% elif key == 'secondary_color' %}
+                                        <span class="badge bg-light text-dark">Warna 2 (Aurora): {{ value }}</span>
+                                    {% elif key == 'accent_color' %}
+                                        <span class="badge bg-light text-dark">Warna 3 (Aurora): {{ value }}</span>
+                                    {% elif key == 'text_color' %}
+                                        <span class="badge bg-light text-dark">Warna Font: {{ value }}</span>
+                                    {% elif key == 'font_family' %}
+                                        <span class="badge bg-light text-dark">Jenis Font: {{ value }}</span>
+                                    {% elif key == 'font_size_base' %}
+                                        <span class="badge bg-light text-dark">Ukuran Font: {{ value }}px</span>
+                                    {% else %}
+                                        <span class="badge bg-light text-dark">{{ key|title }}: {{ value }}</span>
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
             {% endfor %}
         </div>
     {% else %}
-        <div class="panel"><i class="bi bi-journal-x text-muted me-1"></i>Belum ada riwayat perubahan.</div>
+        <div class="panel text-center py-5">
+            <i class="bi bi-inbox text-muted" style="font-size: 2rem;"></i>
+            <p class="text-muted mt-2">Belum ada riwayat perubahan</p>
+        </div>
     {% endif %}
 </section>
-
-<section class="mt-5">
-    <h2 class="section-title"><i class="bi bi-graph-up me-2"></i>Audit Insights</h2>
-    <div class="info-cards">
-        <article class="panel">
-            <h3 class="mb-2"><i class="bi bi-activity text-primary"></i>Activity Tracking</h3>
-            <p>Riwayat ini membantu melacak aktivitas authorized users dalam mengubah tampilan website, mendukung prinsip accountability.</p>
-        </article>
-        <article class="panel">
-            <h3 class="mb-2"><i class="bi bi-lock text-success"></i>Security Compliance</h3>
-            <p>Setiap perubahan tercatat dengan timestamp dan user identity untuk memenuhi standar security dalam tugas kuliah.</p>
-        </article>
-        <article class="panel">
-            <h3 class="mb-2"><i class="bi bi-eye text-info"></i>Transparency</h3>
-            <p>Membuat proses perubahan tema transparan dan dapat diaudit, mengedukasi tentang pentingnya logging dalam aplikasi.</p>
-        </article>
-    </div>
-</section>
-<div class="mt-4 text-end"><a href="{% url 'group_bio:index' %}" class="btn btn-outline-primary"><i class="bi bi-arrow-left me-1"></i>Kembali</a></div>
 {% endblock %}

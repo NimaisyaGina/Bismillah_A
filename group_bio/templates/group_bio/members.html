@@ -10,18 +10,19 @@
 <div class="py-2"></div>
 
 <section>
+    <div class="members-page">
     <h2 class="section-title"><i class="bi bi-people-fill me-2"></i>Group Members List</h2>
     <p class="text-muted mb-4">
         Biodata anggota Bismillah A - Tugas Keamanan Perangkat Lunak.
     </p>
 
     {% if members %}
-        <div class="info-cards" style="grid-template-columns: repeat(2, 1fr);">
+        <div class="info-cards" style="grid-template-columns: repeat(2, 1fr); gap: 1rem;">
             {% for member in members %}
                 <article class="panel member-card">
                     {% with avatar_name=member.full_name|urlencode %}
                         {% if member.profile_image %}
-                            <!-- 🔥 FIX DI SINI -->
+                            
                             <img src="{{ member.profile_image.url }}" 
                                  alt="Profile {{ member.full_name }}" 
                                  class="profile-img">
@@ -54,5 +55,6 @@
             Belum ada anggota di database.
         </div>
     {% endif %}
+    </div>
 </section>
 {% endblock %}

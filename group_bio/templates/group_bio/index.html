@@ -9,13 +9,18 @@
     <p class="lead">Platform demo Authentication & Authorization untuk Tugas Keamanan Perangkat Lunak Genap 2025/2026. Jelajahi biodata kelompok dengan akses terkontrol via Google OAuth.</p>
     <div class="mt-3 text-end">
         <a href="{% url 'group_bio:members' %}" class="btn btn-info me-2"><i class="bi bi-people me-1"></i>Data Anggota</a>
-        <a href="{% url 'group_bio:edit_theme' %}" class="btn btn-primary"><i class="bi bi-palette me-1"></i>Ubah Tema</a>
+        {% if can_edit_theme %}
+            <a href="{% url 'group_bio:reset_theme' %}" class="btn btn-secondary me-2"><i class="bi bi-arrow-counterclockwise me-1"></i>Reset Tema</a>
+            <a href="{% url 'group_bio:edit_theme' %}" class="btn btn-primary"><i class="bi bi-palette me-1"></i>Ubah Tema</a>
+        {% else %}
+            <a href="{% url 'group_bio:edit_theme' %}" class="btn btn-primary"><i class="bi bi-palette me-1"></i>Ubah Tema</a>
+        {% endif %}
     </div>
 </div>
 
 <section class="mt-4">
     <h2 class="section-title"><i class="bi bi-bar-chart me-2"></i>Key Statistics</h2>
-    <div class="info-cards">
+    <div class="info-cards members-section">
         <article class="panel">
             <h3><i class="bi bi-people-fill text-primary"></i> {{ member_count }}</h3>
             <small>Total anggota terdaftar</small>
@@ -35,7 +40,7 @@
     </div>
 </section>
 
-<section class="mt-5">
+<section class="mt-5 members-section">
     <h2 class="section-title"><i class="bi bi-star me-2"></i>Members</h2>
     <div class="info-cards">
         {% for member in members|slice:":4" %}

@@ -9,38 +9,49 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <style>
         :root {
-            --bg-100: #f4f7ff;
-            --bg-200: #e9eeff;
-            --primary: #143f85;
-            --secondary: #0d2c5f;
-            --accent: #ff7c21;
-            --text-main: #1c2a4d;
+            --bg-100: {{ theme.background_color|default:"#f8fafb" }};
+            --bg-200: {{ theme.background_color|default:"#f4f7ff" }};
+            --primary: {{ theme.primary_color|default:"#c2e7ff" }};
+            --secondary: {{ theme.secondary_color|default:"#f8dff0" }};
+            --accent: {{ theme.accent_color|default:"#ffe9c9" }};
+            --text-main: {{ theme.text_color|default:"#1c2a4d" }};
             --text-muted: #5f6b8a;
             --card: rgba(255, 255, 255, 0.86);
             --border: rgba(20, 55, 110, 0.16);
             --shadow: 0 12px 28px rgba(28, 48, 97, 0.15);
+            --font-family: {{ theme.font_family|default:"Poppins" }};
+            --ui-primary: #143f85;
+            --ui-secondary: #0d2c5f;
+            --ui-accent: #ff7c21;
+            --ui-text: #1c2a4d;
         }
 
-        * { box-sizing: border-box; }
+        * { 
+            box-sizing: border-box;
+            font-family: var(--font-family) !important;
+        }
         body {
             margin: 0;
             min-height: 100vh;
-            font-family: 'Poppins', 'Inter', sans-serif;
+            font-family: var(--font-family), 'Inter', sans-serif !important;
             color: var(--text-main);
-            background: linear-gradient(115deg, #fdcfaa, #c6d6f8, #e6b5b5);
-            background-size: 300% 300%;
-            animation: aurora 12s ease infinite;
+            background:
+                radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.4), transparent 30%),
+                radial-gradient(circle at 80% 30%, rgba(255, 255, 255, 0.3), transparent 35%),
+                linear-gradient(120deg, var(--primary) 0%, var(--secondary) 35%, var(--accent) 70%, var(--primary) 100%);
+            background-size: 500% 500%;
+            animation: aurora 9s ease-in-out infinite;
             display: flex;
             flex-direction: column;
             padding-top: 80px;
         }
 
         @keyframes aurora {
-            0% { background-position: 0% 50%; }
-            25% { background-position: 100% 50%; }
-            50% { background-position: 100% 0%; }
-            75% { background-position: 0% 100%; }
-            100% { background-position: 0% 50%; }
+            0% { background-position: 0% 40%; }
+            25% { background-position: 50% 60%; }
+            50% { background-position: 100% 40%; }
+            75% { background-position: 50% 20%; }
+            100% { background-position: 0% 40%; }
         }
 
         @keyframes gradientShift {
@@ -56,7 +67,7 @@
         .site-header {
             background: rgba(255, 255, 255, 0.25);
             backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.25);
             box-shadow: 0 4px 18px rgba(18, 36, 86, 0.08);
             position: fixed;
             top: 0;
@@ -65,12 +76,13 @@
             z-index: 1000;
             border-radius: 0 0 50px 50px;
             padding: 0.25rem 2rem;
+            color: #fff;
         }
 
         .navbar-brand {
             font-weight: 700;
             letter-spacing: 0.03em;
-            color: var(--primary) !important;
+            color: var(--ui-primary) !important;
         }
 
         .navbar-nav .nav-item {
@@ -78,7 +90,7 @@
         }
 
         .nav-link {
-            color: var(--text-main) !important;
+            color: #f9fbff !important;
             font-weight: 500;
             position: relative;
             padding: 0.5rem 1rem;
@@ -92,13 +104,23 @@
             min-height: 44px;
             border-radius: 12px;
             transition: background-color .2s ease, color .2s ease;
-            color: var(--primary) !important;
+            color: var(--ui-primary) !important;
         }
 
         .nav-icon .icon { display: inline-block; }
         .nav-icon .label { display: none; }
-        .nav-icon .icon i { color: var(--primary); }
-        .nav-icon .label { color: var(--primary); }
+        .nav-icon .icon i { color: var(--ui-primary); }
+        .nav-icon .label { color: var(--ui-primary); }
+
+        .nav-icon .icon i,
+        .nav-icon .label {
+            color: var(--ui-secondary) !important;
+        }
+
+        .site-header .nav-icon .icon i,
+        .site-header .nav-icon .label {
+            color: #fff;
+        }
 
         .nav-icon:hover { background: rgba(255,255,255,0.2); }
         .nav-icon:hover .icon { display: none; }
@@ -106,11 +128,11 @@
 
 
         .nav-link.active, .nav-link:hover {
-            color: var(--accent) !important;
+            color: var(--ui-accent) !important;
         }
 
         .btn-primary {
-            background-color: var(--accent);
+            background-color: var(--ui-accent);
             border-color: var(--accent);
             box-shadow: 0 8px 16px rgba(255, 124, 33, 0.25);
         }
@@ -128,13 +150,27 @@
         }
 
         .hero {
-            background: linear-gradient(145deg, rgba(20, 66, 151, 0.85), rgba(8, 33, 86, 0.9));
+            background: linear-gradient(140deg, rgba(20, 50, 120, 0.95), rgba(15, 38, 98, 0.96));
             color: #fff;
             border-radius: 20px;
             padding: 2.5rem;
             box-shadow: var(--shadow);
             position: relative;
             overflow: hidden;
+        }
+
+        .hero .small-pill {
+            background: rgba(255, 255, 255, 0.15);
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.35);
+        }
+
+        .hero h1 {
+            color: #fff;
+        }
+
+        .hero .lead {
+            color: rgba(255, 255, 255, 0.92);
         }
 
         .hero .small-pill {
@@ -228,7 +264,7 @@
 
         .panel h3 {
             margin: 0 0 .35rem;
-            color: var(--primary);
+            color: var(--ui-secondary);
         }
 
         .panel small {
@@ -236,17 +272,76 @@
         }
 
         .member-card {
-            border: 1px solid var(--border);
+            border: 2px solid rgba(20, 63, 133, 0.25);
             border-radius: 16px;
-            padding: 1rem;
+            padding: 1.2rem;
+            min-height: 330px;
             background: var(--card);
             transition: transform .25s ease, box-shadow .25s ease;
             text-align: center;
         }
 
+        .members-section .member-card {
+            padding: 1.4rem;
+            min-height: 360px;
+            box-shadow: 0 20px 40px rgba(20, 63, 133, 0.25);
+            border-color: rgba(255, 124, 33, 0.45);
+        }
+
+        .members-section .member-card .profile-img {
+            width: 110px;
+            height: 110px;
+            margin-bottom: 0.8rem;
+        }
+
+        .members-section .member-card .name {
+            font-size: 1.6rem;
+        }
+
+        .members-section .member-card p,
+        .members-section .member-card small {
+            font-size: 1.1rem;
+        }
+
+        .members-section .info-cards {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(320px, 1fr));
+            gap: 1.2rem;
+        }
+
+        @media (max-width: 992px) {
+            .members-section .info-cards {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .member-card {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .member-card .profile-img {
+            width: 120px;
+            height: 120px;
+            margin-bottom: 0.95rem;
+        }
+
+        .members-section .member-card .name {
+            font-size: 1.35rem;
+            font-weight: 700;
+        }
+
+        .members-section .member-card p,
+        .members-section .member-card small {
+            font-size: 1.05rem;
+        }
+
         .member-card:hover { transform: translateY(-3px); box-shadow: 0 12px 26px rgba(20, 44, 94, 0.18); }
 
-        .member-card .name { font-weight: 600; color: var(--secondary); }
+        .member-card .name { font-weight: 600; color: var(--ui-secondary); }
 
         .profile-img {
             width: 60px;
@@ -261,7 +356,7 @@
             font-size: 1.55rem;
             margin-bottom: 1rem;
             font-weight: 700;
-            color: var(--secondary);
+            color: var(--ui-secondary);
             position: relative;
         }
 
@@ -269,7 +364,7 @@
             content: '';
             width: 72px;
             height: 3px;
-            background: var(--accent);
+            background: var(--ui-accent);
             position: absolute;
             left: 0;
             bottom: -0.3rem;
