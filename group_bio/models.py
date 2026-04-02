@@ -22,7 +22,7 @@ class GroupMember(models.Model):
         default='anggota'
     )
     bio = models.TextField(blank=True)
-    profile_image = models.URLField(blank=True)  # URL dari Google Profile
+    profile_image = models.ImageField(upload_to='profile_images/', blank=True, null=True)
     joined_at = models.DateTimeField(auto_now_add=True)
     
     # Security audit logging

@@ -3,249 +3,335 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Bismillah Group A - Keamanan Perangkat Lunak{% endblock %}</title>
+    <title>{% block title %}Bismillah A{% endblock %}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <style>
         :root {
-            --primary-color: {{ theme.primary_color }};
-            --secondary-color: {{ theme.secondary_color }};
-            --accent-color: {{ theme.accent_color }};
-            --bg-color: {{ theme.background_color }};
-            --text-color: {{ theme.text_color }};
-            --font-family: {{ theme.font_family }};
-            --font-size-base: {{ theme.font_size_base }}px;
+            --bg-100: #f4f7ff;
+            --bg-200: #e9eeff;
+            --primary: #143f85;
+            --secondary: #0d2c5f;
+            --accent: #ff7c21;
+            --text-main: #1c2a4d;
+            --text-muted: #5f6b8a;
+            --card: rgba(255, 255, 255, 0.86);
+            --border: rgba(20, 55, 110, 0.16);
+            --shadow: 0 12px 28px rgba(28, 48, 97, 0.15);
         }
-        
-        * {
-            font-family: var(--font-family), sans-serif;
-            font-size: var(--font-size-base);
-            color: var(--text-color);
-        }
-        
+
+        * { box-sizing: border-box; }
         body {
-            background-color: var(--bg-color);
-            color: var(--text-color);
+            margin: 0;
+            min-height: 100vh;
+            font-family: 'Poppins', 'Inter', sans-serif;
+            color: var(--text-main);
+            background: linear-gradient(115deg, #fdcfaa, #c6d6f8, #e6b5b5);
+            background-size: 300% 300%;
+            animation: aurora 12s ease infinite;
+            display: flex;
+            flex-direction: column;
+            padding-top: 80px;
         }
-        
-        .navbar {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+
+        @keyframes aurora {
+            0% { background-position: 0% 50%; }
+            25% { background-position: 100% 50%; }
+            50% { background-position: 100% 0%; }
+            75% { background-position: 0% 100%; }
+            100% { background-position: 0% 50%; }
         }
-        
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            25% { background-position: 50% 25%; }
+            50% { background-position: 100% 50%; }
+            75% { background-position: 50% 75%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        a { text-decoration: none; }
+
+        .site-header {
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 4px 18px rgba(18, 36, 86, 0.08);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            border-radius: 0 0 50px 50px;
+            padding: 0.25rem 2rem;
+        }
+
         .navbar-brand {
-            font-weight: bold;
-            font-size: 1.4em;
+            font-weight: 700;
+            letter-spacing: 0.03em;
+            color: var(--primary) !important;
         }
-        
+
+        .navbar-nav .nav-item {
+            margin-right: 1rem;
+        }
+
+        .nav-link {
+            color: var(--text-main) !important;
+            font-weight: 500;
+            position: relative;
+            padding: 0.5rem 1rem;
+        }
+
+        .nav-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 84px;
+            min-height: 44px;
+            border-radius: 12px;
+            transition: background-color .2s ease, color .2s ease;
+            color: var(--primary) !important;
+        }
+
+        .nav-icon .icon { display: inline-block; }
+        .nav-icon .label { display: none; }
+        .nav-icon .icon i { color: var(--primary); }
+        .nav-icon .label { color: var(--primary); }
+
+        .nav-icon:hover { background: rgba(255,255,255,0.2); }
+        .nav-icon:hover .icon { display: none; }
+        .nav-icon:hover .label { display: inline-block; }
+
+
+        .nav-link.active, .nav-link:hover {
+            color: var(--accent) !important;
+        }
+
         .btn-primary {
-            background-color: var(--primary-color);
-            border-color: var(--primary-color);
+            background-color: var(--accent);
+            border-color: var(--accent);
+            box-shadow: 0 8px 16px rgba(255, 124, 33, 0.25);
         }
-        
+
         .btn-primary:hover {
-            background-color: var(--accent-color);
-            border-color: var(--accent-color);
-        }
-        
-        .card {
-            border-color: var(--primary-color);
-            border-top: 4px solid var(--primary-color);
-        }
-        
-        .card-header {
-            background-color: var(--primary-color);
-            color: white;
-        }
-        
-        h1, h2, h3, h4, h5, h6 {
-            color: var(--primary-color);
-        }
-        
-        .btn-edit-theme {
-            background-color: var(--accent-color);
-            color: white;
-            border: none;
-        }
-        
-        .btn-edit-theme:hover {
-            background-color: var(--secondary-color);
-            color: white;
+            background-color: #ee6a15;
+            border-color: #ee6a15;
         }
 
-        .security-badge {
-            display: inline-block;
-            background-color: var(--accent-color);
-            color: white;
-            padding: 0.25rem 0.75rem;
+        main {
+            padding: 2.3rem 1rem 3rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            flex: 1;
+        }
+
+        .hero {
+            background: linear-gradient(145deg, rgba(20, 66, 151, 0.85), rgba(8, 33, 86, 0.9));
+            color: #fff;
             border-radius: 20px;
-            font-size: 0.85em;
-            margin: 0.25rem;
+            padding: 2.5rem;
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
         }
 
-        .authentication-status {
-            padding: 1rem;
-            border-left: 4px solid var(--primary-color);
-            background-color: rgba(52, 152, 219, 0.1);
-            margin-bottom: 1rem;
-            border-radius: 0.25rem;
+        .hero .small-pill {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.15);
+            color: #fff;
+            border-radius: 999px;
+            padding: .35rem .8rem;
+            margin-right: .4rem;
+            font-size: .85rem;
+            text-transform: uppercase;
+            font-weight: 600;
+            letter-spacing: .04em;
+        }
+
+        .feature-card {
+            min-height: 270px;
+            height: auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            text-align: center;
+        }
+
+        .feature-card p,
+        .feature-card h3 {
+            text-align: center;
+        }
+
+        .feature-icon i {
+            font-size: 2rem;
+            margin-bottom: 0.4rem;
+        }
+
+        .hero .small-pill {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.15);
+            color: #fff;
+            border-radius: 999px;
+            padding: .35rem .8rem;
+            margin-right: .4rem;
+            font-size: .85rem;
+            text-transform: uppercase;
+            font-weight: 600;
+            letter-spacing: .04em;
+        }
+
+        .info-cards {
+            margin-top: 2rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+            gap: 1rem;
+            justify-content: center;
+            align-items: stretch;
+        }
+
+        .panel {
+            background: rgba(30, 58, 138, 0.1);
+            backdrop-filter: blur(10px);
+            text-align: center;
+            border: 1px solid rgba(30, 58, 138, 0.2);
+            border-radius: 18px;
+            box-shadow: var(--shadow);
+            padding: 1.35rem;
+            transition: transform .25s ease, box-shadow .25s ease;
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .panel:nth-child(1) { background: rgba(30, 58, 138, 0.1); backdrop-filter: blur(10px); }
+        .panel:nth-child(2) { background: rgba(30, 58, 138, 0.12); backdrop-filter: blur(10px); }
+        .panel:nth-child(3) { background: rgba(30, 58, 138, 0.14); backdrop-filter: blur(10px); }
+        .panel:nth-child(4) { background: rgba(30, 58, 138, 0.16); backdrop-filter: blur(10px); }
+        .panel:nth-child(5) { background: rgba(30, 58, 138, 0.18); backdrop-filter: blur(10px); }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .panel:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 18px 30px rgba(20, 50, 95, 0.2);
+        }
+
+        .panel h3 {
+            margin: 0 0 .35rem;
+            color: var(--primary);
+        }
+
+        .panel small {
+            color: var(--text-muted);
         }
 
         .member-card {
-            transition: transform 0.2s;
-            border: 2px solid #e9ecef;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1rem;
+            background: var(--card);
+            transition: transform .25s ease, box-shadow .25s ease;
+            text-align: center;
         }
 
-        .member-card:hover {
-            transform: translateY(-5px);
-            border-color: var(--primary-color);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-        }
+        .member-card:hover { transform: translateY(-3px); box-shadow: 0 12px 26px rgba(20, 44, 94, 0.18); }
 
-        .member-role {
-            display: inline-block;
-            background-color: var(--secondary-color);
-            color: white;
-            padding: 0.25rem 0.75rem;
-            border-radius: 20px;
-            font-size: 0.85em;
+        .member-card .name { font-weight: 600; color: var(--secondary); }
+
+        .profile-img {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--border);
             margin-bottom: 0.5rem;
         }
 
-        .footer {
-            background-color: var(--secondary-color);
-            color: white;
-            padding: 2rem;
-            margin-top: 3rem;
+        .section-title {
+            font-size: 1.55rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+            color: var(--secondary);
+            position: relative;
         }
 
-        .alert-security {
-            background-color: rgba(231, 76, 60, 0.1);
-            border-color: var(--accent-color);
-            color: var(--accent-color);
+        .section-title::after {
+            content: '';
+            width: 72px;
+            height: 3px;
+            background: var(--accent);
+            position: absolute;
+            left: 0;
+            bottom: -0.3rem;
+            border-radius: 999px;
         }
+
+        .footer {
+            margin-top: 3rem;
+            padding: 1.5rem 1rem;
+            text-align: center;
+            color: var(--text-muted);
+            border-top: 1px solid var(--border);
+            background: #f8faff;
+        }
+
+        .badge-soft {
+            display: inline-block;
+            background: rgba(255, 124, 33, 0.12);
+            color: #e25903;
+            padding: .28rem .65rem;
+            border-radius: 999px;
+            font-weight: 700;
+        }
+
+        input, select, textarea { border-radius: 10px; }
     </style>
     {% block extra_css %}{% endblock %}
 </head>
 <body>
-    <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
-        <div class="container">
-            <a class="navbar-brand" href="{% url 'group_bio:index' %}">🔐 Bismillah Group A</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+    <header class="site-header">
+        <nav class="navbar navbar-expand-lg navbar-light container">
+            <a class="navbar-brand" href="{% url 'group_bio:index' %}"><i class="bi bi-award me-2"></i>Bismillah A</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'group_bio:index' %}">Beranda</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'group_bio:members' %}">Anggota</a>
-                    </li>
+            <div class="collapse navbar-collapse" id="navMenu">
+                <ul class="navbar-nav ms-auto align-items-center" id="navbar-nav">
+                    <li class="nav-item"><a class="nav-link nav-icon" href="{% url 'group_bio:index' %}"><span class="icon"><i class="bi bi-house-door"></i></span><span class="label">Home</span></a></li>
+                    <li class="nav-item"><a class="nav-link nav-icon" href="{% url 'group_bio:members' %}"><span class="icon"><i class="bi bi-people"></i></span><span class="label">Members</span></a></li>
+                    <li class="nav-item"><a class="nav-link nav-icon" href="{% url 'group_bio:edit_theme' %}"><span class="icon"><i class="bi bi-palette"></i></span><span class="label">Theme</span></a></li>
+                    <li class="nav-item"><a class="nav-link nav-icon" href="{% url 'group_bio:theme_history' %}"><span class="icon"><i class="bi bi-clock-history"></i></span><span class="label">History</span></a></li>
                     {% if user.is_authenticated %}
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                                {{ user.first_name|default:user.username }} 👤
-                            </a>
-                            <ul class="dropdown-menu dropdown-menu-end">
-                                {% if can_edit_theme %}
-                                    <li>
-                                        <a class="dropdown-item" href="{% url 'group_bio:edit_theme' %}">
-                                            ✏️ Ubah Tema
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item" href="{% url 'group_bio:theme_history' %}">
-                                            📋 Riwayat Perubahan
-                                        </a>
-                                    </li>
-                                    <li><hr class="dropdown-divider"></li>
-                                {% endif %}
-                                <li>
-                                    <form action="{% url 'account_logout' %}" method="post" class="px-3 py-1">
-                                        {% csrf_token %}
-                                        <button type="submit" class="dropdown-item px-0">Logout</button>
-                                    </form>
-                                </li>
-                            </ul>
-                        </li>
+                        <li class="nav-item ms-2"><a class="btn btn-outline-primary" href="{% url 'account_logout' %}" onclick="event.preventDefault(); document.getElementById('logoutForm').submit();" data-tooltip="Logout"><i class="bi bi-box-arrow-right"></i></a></li>
                     {% else %}
-                        <li class="nav-item">
-                            <a class="nav-link btn btn-primary text-white ms-2" href="{% url 'account_login' %}">
-                                Login
-                            </a>
-                        </li>
+                        <li class="nav-item ms-2"><a class="btn btn-primary" href="{% url 'account_login' %}"><i class="bi bi-google me-1"></i>Login</a></li>
                     {% endif %}
                 </ul>
             </div>
-        </div>
-    </nav>
+        </nav>
+    </header>
 
-    <!-- Main content -->
-    <main class="py-4">
-        <div class="container">
-            {% if messages %}
-                {% for message in messages %}
-                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-                        {{ message }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                    </div>
-                {% endfor %}
-            {% endif %}
+    <form id="logoutForm" action="{% url 'account_logout' %}" method="post" style="display:none;">{% csrf_token %}</form>
 
-            <!-- Authentication Status Banner -->
-            {% if user.is_authenticated %}
-                <div class="authentication-status">
-                    <strong>✅ Status: Terautentikasi</strong><br>
-                    Anda login sebagai <strong>{{ user.email }}</strong>
-                    {% if can_edit_theme %}
-                        <span class="security-badge">🔓 Dapat mengubah tema</span>
-                    {% else %}
-                        <span class="security-badge" style="background-color: #95a5a6;">🔒 Hanya dapat melihat</span>
-                    {% endif %}
-                </div>
-            {% else %}
-                <div class="authentication-status" style="background-color: rgba(149, 165, 166, 0.1); border-color: #95a5a6;">
-                    <strong>🔒 Status: Belum login</strong><br>
-                    Anda dapat melihat biodata kelompok. 
-                    <a href="{% url 'account_login' %}" class="btn btn-sm btn-primary">Login</a>
-                    atau <a href="{% url 'account_signup' %}" class="btn btn-sm btn-outline-primary">Daftar</a>
-                    untuk mengakses fitur anggota.
-                </div>
-            {% endif %}
-
-            {% block content %}{% endblock %}
-        </div>
+    <main>
+        {% block content %}{% endblock %}
     </main>
 
-    <!-- Footer -->
     <footer class="footer">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-6">
-                    <h5>Bismillah Group A</h5>
-                    <p>Mata Kuliah: Pengantar Keamanan Perangkat Lunak</p>
-                    <p class="text-muted">Fokus: Authentication & Authorization dengan OAuth 2.0</p>
-                </div>
-                <div class="col-md-6">
-                    <h5>Fitur Keamanan</h5>
-                    <ul class="list-unstyled">
-                        <li>✅ OAuth 2.0 dengan Google</li>
-                        <li>✅ CSRF Protection</li>
-                        <li>✅ Authorization checks (GROUP MEMBER ONLY)</li>
-                        <li>✅ Audit logging & modification history</li>
-                        <li>✅ Secure session handling</li>
-                    </ul>
-                </div>
-            </div>
-            <hr class="my-3" style="border-color: rgba(255,255,255,0.3);">
-            <p class="text-center text-muted mb-0">
-                © 2024 Bismillah Group A | Pengantar Keamanan Perangkat Lunak
-            </p>
-        </div>
+        <p><i class="bi bi-shield-check text-success me-1"></i><strong>Bismillah A</strong> &bull; Tugas Keamanan Perangkat Lunak - Authentication & Authorization</p>
+        <p><i class="bi bi-code-slash me-1"></i>Dibangun dengan Django & OAuth Google untuk demo security yang aman dan user-friendly.</p>
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    {% block extra_js %}{% endblock %}
 </body>
 </html>

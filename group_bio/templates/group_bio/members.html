@@ -1,126 +1,58 @@
 {% extends "group_bio/base.html" %}
-
-{% block title %}Anggota Kelompok - Bismillah Group A{% endblock %}
-
+{% block title %}Anggota - Bismillah A{% endblock %}
 {% block content %}
-<div class="row mb-5">
-    <div class="col-12">
-        <div class="card shadow-sm">
-            <div class="card-header">
-                <h3 class="mb-0">👥 Daftar Anggota Kelompok</h3>
-            </div>
-            <div class="card-body">
-                <p class="text-muted mb-4">
-                    Total: <strong>{{ member_count }} anggota</strong>
-                </p>
-
-                <div class="row">
-                    {% for member in members %}
-                        <div class="col-lg-4 col-md-6 mb-4">
-                            <div class="card member-card h-100">
-                                <div class="card-body text-center">
-                                    <!-- Profile Image -->
-                                    {% if member.profile_image %}
-                                        <img src="{{ member.profile_image }}" alt="{{ member.full_name }}" 
-                                             class="rounded-circle mb-3" width="80" height="80"
-                                             style="object-fit: cover; border: 3px solid var(--primary-color);">
-                                    {% else %}
-                                        <div class="rounded-circle bg-primary d-inline-flex align-items-center justify-content-center mb-3"
-                                             style="width: 80px; height: 80px; color: white; font-size: 2rem;">
-                                            👤
-                                        </div>
-                                    {% endif %}
-
-                                    <!-- Name -->
-                                    <h5 class="card-title mb-2">{{ member.full_name }}</h5>
-
-                                    <!-- Role Badge -->
-                                    <div class="mb-2">
-                                        <span class="member-role">
-                                            {% if member.role == 'ketua' %}
-                                                👑 {{ member.display_role }}
-                                            {% else %}
-                                                👤 {{ member.display_role }}
-                                            {% endif %}
-                                        </span>
-                                    </div>
-
-                                    <!-- Details -->
-                                    <div class="text-start mt-3">
-                                        <p class="mb-2">
-                                            <strong>NIM:</strong> {{ member.nim }}
-                                        </p>
-                                        {% if member.email %}
-                                            <p class="mb-2">
-                                                <strong>Email:</strong> <a href="mailto:{{ member.email }}">{{ member.email }}</a>
-                                            </p>
-                                        {% endif %}
-                                        {% if member.phone %}
-                                            <p class="mb-2">
-                                                <strong>Telepon:</strong> {{ member.phone }}
-                                            </p>
-                                        {% endif %}
-                                        {% if member.bio %}
-                                            <p class="mb-2">
-                                                <strong>Bio:</strong><br>
-                                                <small>{{ member.bio }}</small>
-                                            </p>
-                                        {% endif %}
-                                    </div>
-
-                                    <!-- Joined Date -->
-                                    {% if member.joined_at %}
-                                        <div class="text-muted text-center mt-3 pt-3" style="border-top: 1px solid #e9ecef;">
-                                            <small>Bergabung: {{ member.joined_at|date:"d/m/Y" }}</small>
-                                        </div>
-                                    {% endif %}
-                                </div>
-                            </div>
-                        </div>
-                    {% empty %}
-                        <div class="col-12">
-                            <div class="alert alert-info text-center">
-                                Belum ada anggota kelompok yang terdaftar.
-                            </div>
-                        </div>
-                    {% endfor %}
-                </div>
-            </div>
-        </div>
-    </div>
+<div class="mt-4 text-start">
+    <a href="{% url 'group_bio:index' %}" class="btn btn-outline-primary">
+        <i class="bi bi-arrow-left me-1"></i>Kembali
+    </a>
 </div>
 
-<!-- Security Information -->
-<div class="row">
-    <div class="col-12">
-        <div class="card shadow-sm bg-light">
-            <div class="card-header bg-info">
-                <h5 class="mb-0" style="color: white;">ℹ️ Informasi Keamanan</h5>
-            </div>
-            <div class="card-body">
-                <p>
-                    Data anggota kelompok di halaman ini bersifat <strong>publik</strong> dan dapat dilihat oleh siapa saja tanpa perlu login.
-                </p>
-                <div class="row">
-                    <div class="col-md-6">
-                        <h6 class="text-info">Authentication:</h6>
-                        <ul class="small">
-                            <li>✅ Data dimuat dari database yang aman</li>
-                            <li>✅ Informasi telah divalidasi saat pendaftaran</li>
-                            <li>✅ Profile image diambil dari Google</li>
-                        </ul>
-                    </div>
-                    <div class="col-md-6">
-                        <h6 class="text-info">Authorization:</h6>
-                        <ul class="small">
-                            <li>✅ Halaman bersifat publik (tidak memerlukan login)</li>
-                            <li>✅ Hanya informasi non-sensitif yang ditampilkan</li>
-                            <li>✅ Hanya anggota yang terdaftar yang ditampilkan</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
+<div class="py-2"></div>
+
+<section>
+    <h2 class="section-title"><i class="bi bi-people-fill me-2"></i>Group Members List</h2>
+    <p class="text-muted mb-4">
+        Biodata anggota Bismillah A - Tugas Keamanan Perangkat Lunak.
+    </p>
+
+    {% if members %}
+        <div class="info-cards" style="grid-template-columns: repeat(2, 1fr);">
+            {% for member in members %}
+                <article class="panel member-card">
+                    {% with avatar_name=member.full_name|urlencode %}
+                        {% if member.profile_image %}
+                            <!-- 🔥 FIX DI SINI -->
+                            <img src="{{ member.profile_image.url }}" 
+                                 alt="Profile {{ member.full_name }}" 
+                                 class="profile-img">
+                        {% else %}
+                            <img src="https://ui-avatars.com/api/?name={{ avatar_name }}&background=2f4f8f&color=ffffff&size=128&rounded=true&format=png" 
+                                 alt="Profile {{ member.full_name }}" 
+                                 class="profile-img">
+                        {% endif %}
+                    {% endwith %}
+
+                    <p class="name">{{ member.full_name }}</p>
+                    <p class="text-muted mb-1">
+                        <i class="bi bi-briefcase me-1"></i>{{ member.display_role }}
+                    </p>
+                    <p class="small mb-1">
+                        <i class="bi bi-card-text me-1"></i>NPM: {{ member.nim }}
+                    </p>
+
+                    {% if member.email %}
+                        <p class="small mb-1">
+                            <i class="bi bi-envelope me-1"></i>{{ member.email }}
+                        </p>
+                    {% endif %}
+                </article>
+            {% endfor %}
         </div>
-    </div>
-</div>
+    {% else %}
+        <div class="panel">
+            <i class="bi bi-exclamation-triangle text-warning me-1"></i>
+            Belum ada anggota di database.
+        </div>
+    {% endif %}
+</section>
 {% endblock %}

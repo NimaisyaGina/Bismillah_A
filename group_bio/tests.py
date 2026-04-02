@@ -18,7 +18,7 @@ class AuthRouteTests(TestCase):
         self.assertContains(response, reverse('account_login'))
         self.assertContains(response, 'Nimaisya Gina Herapati')
         self.assertContains(response, 'Nadin Ananda')
-        self.assertContains(response, 'Felicia Evangeline')
+        self.assertContains(response, 'Felicia Evangeline Mubarun')
         self.assertContains(response, 'Flora Cahaya Putri')
 
     def test_login_page_shows_google_sign_in_link(self):
@@ -39,7 +39,7 @@ class AuthRouteTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Nimaisya Gina Herapati')
         self.assertContains(response, 'Nadin Ananda')
-        self.assertContains(response, 'Felicia Evangeline')
+        self.assertContains(response, 'Felicia Evangeline Mubarun')
         self.assertContains(response, 'Flora Cahaya Putri')
 
     def test_theme_authorization_uses_whitelisted_email(self):

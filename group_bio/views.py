@@ -30,7 +30,7 @@ DEFAULT_GROUP_MEMBERS = [
     },
     {
         'nim': '2406437054',
-        'full_name': 'Felicia Evangeline',
+        'full_name': 'Felicia Evangeline Mubarun',
         'email': 'feliciaeva1503@gmail.com',
         'role': 'anggota',
         'bio': 'Anggota kelompok.',
