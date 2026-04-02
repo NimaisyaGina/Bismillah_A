@@ -54,9 +54,9 @@ class GroupTheme(models.Model):
     """
     group_id = models.IntegerField(default=1, unique=True)
     
-    primary_color = models.CharField(max_length=7, default="#a9dafa") 
-    secondary_color = models.CharField(max_length=7, default='#f8dff0') 
-    accent_color = models.CharField(max_length=7, default='#ffe9c9') 
+    primary_color = models.CharField(max_length=7, default="#143f85") 
+    secondary_color = models.CharField(max_length=7, default='#0d2c5f') 
+    accent_color = models.CharField(max_length=7, default='#ff7c21') 
     
     font_family = models.CharField(
         max_length=50,
@@ -68,12 +68,13 @@ class GroupTheme(models.Model):
             ('Courier New', 'Courier New'),
             ('Trebuchet MS', 'Trebuchet MS'),
             ('Comic Sans MS', 'Comic Sans MS'),
+            ('Poppins', 'Poppins'),
         ],
-        default='Arial'
+        default='Poppins'
     )
     font_size_base = models.IntegerField(default=16, help_text="Base font size in pixels")
     
-    background_color = models.CharField(max_length=7, default='#f3f7ff')
+    background_color = models.CharField(max_length=7, default='#f4f7ff')
     text_color = models.CharField(max_length=7, default='#1c2a4d')
     
     last_modified_by = models.ForeignKey(
