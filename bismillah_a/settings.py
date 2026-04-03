@@ -1,7 +1,3 @@
-"""
-Django settings for bismillah_a project.
-"""
-
 import os
 from pathlib import Path
 from dotenv import load_dotenv
